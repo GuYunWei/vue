@@ -66,7 +66,7 @@
         <group>
           <cell class="title" title="当前轮灌组"></cell>
           <div class="irriItem">
-            <div class="name"><img slot="icon" src="../assets/stop.gif"></div>
+            <div class="name"><icon name="启动" :scale="4" color="red"></icon></div>
             <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
           </div>
         </group>
@@ -80,7 +80,7 @@
             <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
           </div>
         </group>
-        <icon name="启动" :scale="4" color="red"></icon>
+        
         <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
           <router-view class="router-view"></router-view>
         </transition>
@@ -93,7 +93,6 @@
 <script>
 import { Group, Grid, GridItem, Cell, CellFormPreview, Drawer, Actionsheet, ViewBox, XInput, XButton, XHeader, Loading, TransferDom, Swiper, Blur } from 'vux'
 import { mapState, mapActions } from 'vuex'
-import 'vue-awesome/icons/flag'
 
 export default {
   directives: {
