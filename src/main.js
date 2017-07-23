@@ -5,8 +5,8 @@ import FastClick from 'fastclick';
 import App from './App';
 import router from './router';
 import store from './store';
-import { sync } from 'vuex-router-sync'
-import Icon from '../node_modules/vue-awesome/components/Icon'
+import { sync } from 'vuex-router-sync';
+import Icon from 'vue-svg-icon/Icon.vue';
 
 Vue.component('icon', Icon)
 FastClick.attach(document.body);

@@ -24,7 +24,7 @@
           </cell>
           <cell class="service" title="客服" link="project/donate" @click.native="drawerVisibility = false">
           </cell>
-          <cell class="setup" title="设置" link="/setup" @click.native="drawerVisibility = false">
+          <cell class="setting" title="设置" link="/setting" @click.native="drawerVisibility = false">
           </cell>
         </group>
         <group class="exit">
@@ -43,7 +43,7 @@
           <span v-if="route.path === '/' || route.path === '/home'" slot="overwrite-left" @click="drawerVisibility = !drawerVisibility">
             <x-icon type="navicon" size="35" class="leftMenu"></x-icon>
           </span>
-          <swiper class="sysSwiper" :list="sysList" v-model="curSystem" direction="horizontal" :min-moving-distance="20" height="40px"></swiper>
+          <swiper class="sysSwiper" :list="sysList" v-model="curSystem" direction="horizontal" :min-moving-distance="20" height="40px" :show-dots="false"></swiper>
         </x-header>
 
         <grid :rows="8">
@@ -64,42 +64,34 @@
           </grid-item>
         </grid>
         <group>
-          <cell title="当前轮灌组"></cell>
-          <cell-form-preview :list="curIrriList"></cell-form-preview>
+          <cell class="title" title="当前轮灌组"></cell>
+          <div class="irriItem">
+            <div class="name"><img slot="icon" src="../assets/stop.gif"></div>
+            <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
+          </div>
         </group>
         <group>
-          <cell title="下一轮灌组"></cell>
-          <x-input placeholder="请输入支管名称" class="weui-vcode">
+          <cell class="title" title="下一轮灌组"></cell>
+          <x-input placeholder="请输入支管名称" class="weui-vcode addBranch">
             <x-button slot="right" type="primary" mini>添加支管</x-button>
           </x-input>
-          <cell-form-preview :list="curIrriList"></cell-form-preview>
+          <div class="irriItem">
+            <div class="name"><img slot="icon" src="../assets/stop.gif"></div>
+            <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
+          </div>
         </group>
-
+        <icon name="启动" :scale="4" color="red"></icon>
         <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
           <router-view class="router-view"></router-view>
         </transition>
             
-        <tabbar class="vux-demo-tabbar" icon-class="vux-center" v-show="!isTabbarDemo" slot="bottom">
-          <tabbar-item :link="{path:'/home'}" :selected="route.path === '/home'">
-            <span class="demo-icon-22" slot="icon">&#xe637;</span>
-            <span slot="label">主页</span>
-          </tabbar-item>
-          <tabbar-item :link="{path:'/service'}" :selected="route.path === '/service'">
-            <span class="demo-icon-22" slot="icon">&#xe633;</span>
-            <span slot="label">客服</span>
-          </tabbar-item>
-          <tabbar-item :link="{path:'/setting'}" :selected="route.path === '/setting'">
-            <span class="demo-icon-22" slot="icon">&#xe630;</span>
-            <span slot="label">设置</span>
-          </tabbar-item>
-        </tabbar>
       </view-box>
     </drawer>
   </div>
 </template>
 
 <script>
-import { Radio, Group, Grid, GridItem, Cell, CellFormPreview, Badge, Drawer, Actionsheet, ButtonTab, ButtonTabItem, ViewBox, XInput, XButton, XHeader, Tabbar, TabbarItem, Loading, TransferDom, Swiper, Flexbox, FlexboxItem, Blur } from 'vux'
+import { Group, Grid, GridItem, Cell, CellFormPreview, Drawer, Actionsheet, ViewBox, XInput, XButton, XHeader, Loading, TransferDom, Swiper, Blur } from 'vux'
 import { mapState, mapActions } from 'vuex'
 import 'vue-awesome/icons/flag'
 
@@ -108,26 +100,18 @@ export default {
     TransferDom
   },
   components: {
-    Radio,
     Group,
     Grid,
     GridItem,
     Cell,
     CellFormPreview,
-    Badge,
     Drawer,
-    ButtonTab,
-    ButtonTabItem,
     ViewBox,
     XInput,
     XButton,
     XHeader,
-    Tabbar,
-    TabbarItem,
     Loading,
     Swiper,
-    Flexbox,
-    FlexboxItem,
     Blur,
     Actionsheet
   },
@@ -138,58 +122,22 @@ export default {
     changeSystem (index) {
       this.curSystem = +index
     },
-    ...mapActions([
-      'updateDemoPosition'
-    ])
   },
   mounted () {
-    this.handler = () => {
-      if (this.path === '/demo') {
-        this.box = document.querySelector('#demo_list_box')
-        this.updateDemoPosition(this.box.scrollTop)
-      }
-    }
-  },
-  beforeDestroy () {
-    this.box && this.box.removeEventListener('scroll', this.handler, false)
+    
   },
   watch: {
     curSystem(curVal, oldVal){
       console.log(curVal);
     },
-    path (path) {
-      if (path === '/component/demo') {
-        this.$router.replace('/demo')
-        return
-      }
-      if (path === '/demo') {
-        setTimeout(() => {
-          this.box = document.querySelector('#demo_list_box')
-          if (this.box) {
-            this.box.removeEventListener('scroll', this.handler, false)
-            this.box.addEventListener('scroll', this.handler, false)
-          }
-        }, 1000)
-      } else {
-        this.box && this.box.removeEventListener('scroll', this.handler, false)
-      }
-    }
   },
   computed: {
     ...mapState({
       route: state => state.route,
       path: state => state.route.path,
-      deviceready: state => state.app.deviceready,
-      demoTop: state => state.vux.demoScrollTop,
       isLoading: state => state.vux.isLoading,
       direction: state => state.vux.direction
     }),
-    isShowBar () {
-      if (/component/.test(this.path)) {
-        return true
-      }
-      return false
-    },
     leftOptions () {
       return {
         showBack: this.route.path !== '/home'
@@ -203,24 +151,6 @@ export default {
     headerTransition () {
       return this.direction === 'forward' ? 'vux-header-fade-in-right' : 'vux-header-fade-in-left'
     },
-    componentName () {
-      if (this.route.path) {
-        const parts = this.route.path.split('/')
-        if (/component/.test(this.route.path) && parts[2]) return parts[2]
-      }
-    },
-    isDemo () {
-      return /component|demo/.test(this.route.path)
-    },
-    isTabbarDemo () {
-      return /tabbar/.test(this.route.path)
-    },
-    // title () {
-    //   if (this.route.path === '/') return 'Home'
-    //   if (this.route.path === '/project/donate') return 'Donate'
-    //   if (this.route.path === '/demo') return 'Demo list'
-    //   return this.componentName ? `Demo/${this.componentName}` : 'Demo/~~'
-    // }
   },
   data () {
     return {
@@ -263,27 +193,28 @@ export default {
 body { background-color: #fbf9fe; }
 html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .leftMenu { fill:#fff;position:relative;top:-8px;left:-3px; }
-.vux-swiper-desc{ line-height: 40px!important; }
+.vux-swiper-desc{ height:40px!important; background-image: none!important; line-height: 40px!important; padding: 0!important; }
 .vux-header-title{ margin: 0 60px!important; }
 .drawer-left .weui-cells:before,
 .drawer-left .weui-cells:after,
-.drawer-left .weui-cell:before{ border: none!important; }
+.weui-cell:before{ border: none!important; }
 .center { text-align: center; padding-top: 20px; color: #fff; font-size: 18px; }
 .center img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #ececec; }
 .vux-bg-blur{ width: 120%!important; height:110%!important; }
 .username{ color: #fff; }
 .home .vux-label{ background: url(../assets/home.png) 30px center no-repeat;}
 .service .vux-label{ background: url(../assets/service.png) 30px center no-repeat;}
-.setup .vux-label{ background: url(../assets/setup.png) 30px center no-repeat;}
+.setting .vux-label{ background: url(../assets/setup.png) 30px center no-repeat;}
 .exit{ position: absolute; left:0; bottom:0px; width:170px; margin: 15px; }
+.title{ border-top: 1px solid #D9D9D9; }
+.addBranch{ border-top: 1px solid #D9D9D9; padding: 7px 15px!important; }
+.irriItem{ text-align:left;border-top: 1px solid #D9D9D9;border-bottom: 1px solid #D9D9D9; overflow: hidden; }
+.irriItem>div{display:inline-block;vertical-align:middle;text-align:center;height:100%; }
+.irriItem>div.name{ width: 100px;text-align:center;padding-left:15px; }
+.irriItem>div.curIrriList{ border-left: 1px solid #D9D9D9; }
 
 .demo-icon-22 { font-family: 'vux-demo'; font-size: 22px; color: #888; }
-.weui-tabbar.vux-demo-tabbar { background-color: #fff; }
-.vux-demo-tabbar .weui-bar__item_on .demo-icon-22 { color: #F70968; }
-.vux-demo-tabbar .weui-tabbar_item.weui-bar__item_on .vux-demo-tabbar-icon-home { color: rgb(53, 73, 94); }
 .demo-icon-22:before { content: attr(icon); }
-.vux-demo-tabbar-component { background-color: #F70968; color: #fff; border-radius: 7px; padding: 0 4px; line-height: 14px; }
-.weui-tabbar__icon + .weui-tabbar__label { margin-top: 0 !important; }
 .vux-demo-header-box { z-index: 100; position: absolute; width: 100%; left: 0; top: 0; }
 @font-face {
   font-family: 'vux-demo';  /* project id 70323 */
