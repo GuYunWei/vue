@@ -46,27 +46,27 @@
           <swiper class="sysSwiper" :list="sysList" v-model="curSystem" direction="horizontal" :min-moving-distance="20" height="40px" :show-dots="false"></swiper>
         </x-header>
 
-        <grid :rows="8">
+        <grid :rows="4">
           <!-- <grid-item label="test" v-for="i in 8">
             <img slot="icon" src="../assets/stop.gif">
           </grid-item> -->
-          <grid-item label="水泵">
-            <img slot="icon" src="../assets/stop.gif">
+          <grid-item class="statusItem" label="水泵">
+            <icon name="水泵" :scale="4" color="#47dd1f"></icon>
           </grid-item>
-          <grid-item label="网关">
-            <img slot="icon" src="../assets/8.png">
+          <grid-item class="statusItem" label="网关">
+            <icon name="网关" :scale="4" color="#47dd1f"></icon>
           </grid-item>
-          <grid-item label="通讯">
-            <img slot="icon" src="../assets/8.png">
+          <grid-item class="statusItem" label="通讯">
+            <icon name="信号4" :scale="3.1" color="#47dd1f"></icon>
           </grid-item>
-          <grid-item label="电池">
-            <img slot="icon" src="../assets/8.png">
+          <grid-item class="statusItem" label="电池">
+            <icon name="电池" :scale="4" color="#47dd1f"></icon>
           </grid-item>
         </grid>
         <group>
           <cell class="title" title="当前轮灌组"></cell>
           <div class="irriItem">
-            <div class="name"><icon name="启动" :scale="4" color="red"></icon></div>
+            <div class="name"><icon name="启动" :scale="4" color="#47dd1f"></icon></div>
             <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
           </div>
         </group>
@@ -76,7 +76,7 @@
             <x-button slot="right" type="primary" mini>添加支管</x-button>
           </x-input>
           <div class="irriItem">
-            <div class="name"><img slot="icon" src="../assets/stop.gif"></div>
+            <div class="name"><icon name="停止" :scale="4" color="red"></icon></div>
             <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
           </div>
         </group>
@@ -211,6 +211,7 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .irriItem>div{display:inline-block;vertical-align:middle;text-align:center;height:100%; }
 .irriItem>div.name{ width: 100px;text-align:center;padding-left:15px; }
 .irriItem>div.curIrriList{ border-left: 1px solid #D9D9D9; }
+.statusItem{ height: 100px; }
 
 .demo-icon-22 { font-family: 'vux-demo'; font-size: 22px; color: #888; }
 .demo-icon-22:before { content: attr(icon); }
