@@ -67,7 +67,29 @@
           <cell class="title" title="当前轮灌组"></cell>
           <div class="irriItem">
             <div class="name"><icon name="启动" :scale="4" color="#47dd1f"></icon></div>
-            <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
+            <div class="curIrriList">
+              <div class="weui-form-preview__bd">
+                <div class="weui-form-preview__item">
+                  <label class="weui-form-preview__label">
+                    <icon name="名称" :scale="2.5" color="#47dd1f"></icon>
+                  </label> 
+                  <span class="weui-form-preview__value">轮灌组1</span>
+                </div>
+                <div class="weui-form-preview__item">
+                  <label class="weui-form-preview__label">
+                    <icon name="编号" :scale="2.5" color="#47dd1f"></icon>
+                  </label> 
+                  <span class="weui-form-preview__value">1000101</span>
+                </div>
+                <div class="weui-form-preview__item">
+                  <label class="weui-form-preview__label">
+                    <icon name="时间" :scale="2.5" color="#47dd1f"></icon>
+                  </label> 
+                  <span class="weui-form-preview__value">2017-7-21 11:00</span>
+                </div>
+              </div>
+            </div>
+            <!-- <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview> -->
           </div>
         </group>
         <group>
@@ -200,6 +222,8 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .center { text-align: center; padding-top: 20px; color: #fff; font-size: 18px; }
 .center img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #ececec; }
 .vux-bg-blur{ width: 120%!important; height:110%!important; }
+.weui-form-preview__label{ height: 30px; text-align: center;}
+
 .username{ color: #fff; }
 .home .vux-label{ background: url(../assets/home.png) 30px center no-repeat;}
 .service .vux-label{ background: url(../assets/service.png) 30px center no-repeat;}
@@ -208,7 +232,7 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .title{ border-top: 1px solid #D9D9D9; }
 .addBranch{ border-top: 1px solid #D9D9D9; padding: 7px 15px!important; }
 .irriItem{ text-align:left;border-top: 1px solid #D9D9D9;border-bottom: 1px solid #D9D9D9; overflow: hidden; }
-.irriItem>div{display:inline-block;vertical-align:middle;text-align:center;height:100%; }
+.irriItem>div{display:inline-block;vertical-align:middle;text-align:center;height:100%;width:60%; }
 .irriItem>div.name{ width: 100px;text-align:center;padding-left:15px; }
 .irriItem>div.curIrriList{ border-left: 1px solid #D9D9D9; }
 .statusItem{ height: 100px; }
