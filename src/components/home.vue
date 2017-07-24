@@ -22,13 +22,17 @@
         <group>
           <cell class="home" title="主页" link="/demo" @click.native="drawerVisibility = false">
           </cell>
-          <cell class="service" title="客服" link="project/donate" @click.native="drawerVisibility = false">
+          <cell class="service" title="灌水计划" link="project/donate" @click.native="drawerVisibility = false">
+          </cell>
+          <cell class="service" title="轮灌计划" link="project/donate" @click.native="drawerVisibility = false">
+          </cell>
+          <cell class="service" title="轮灌编制" link="project/donate" @click.native="drawerVisibility = false">
           </cell>
           <cell class="setting" title="设置" link="/setting" @click.native="drawerVisibility = false">
           </cell>
         </group>
         <group class="exit">
-          <x-button type="warn">退出登录</x-button>
+          <x-button type="warn" @click.native="logout">退出登录</x-button>
         </group>
       </div>
 
@@ -45,61 +49,175 @@
           </span>
           <swiper class="sysSwiper" :list="sysList" v-model="curSystem" direction="horizontal" :min-moving-distance="20" height="40px" :show-dots="false"></swiper>
         </x-header>
-
-        <grid :rows="4">
-          <!-- <grid-item label="test" v-for="i in 8">
-            <img slot="icon" src="../assets/stop.gif">
-          </grid-item> -->
-          <grid-item class="statusItem" label="水泵">
-            <icon name="水泵" :scale="4" color="#47dd1f"></icon>
-          </grid-item>
-          <grid-item class="statusItem" label="网关">
-            <icon name="网关" :scale="4" color="#47dd1f"></icon>
-          </grid-item>
-          <grid-item class="statusItem" label="通讯">
-            <icon name="信号4" :scale="3.1" color="#47dd1f"></icon>
-          </grid-item>
-          <grid-item class="statusItem" label="电池">
-            <icon name="电池" :scale="4" color="#47dd1f"></icon>
-          </grid-item>
-        </grid>
-        <group>
-          <cell class="title" title="当前轮灌组"></cell>
-          <div class="irriItem">
-            <div class="name"><icon name="启动" :scale="4" color="#47dd1f"></icon></div>
-            <div class="curIrriList">
-              <div class="weui-form-preview__bd">
-                <div class="weui-form-preview__item">
-                  <label class="weui-form-preview__label">
-                    <icon name="名称" :scale="2.5" color="#47dd1f"></icon>
-                  </label> 
-                  <span class="weui-form-preview__value">轮灌组1</span>
-                </div>
-                <div class="weui-form-preview__item">
-                  <label class="weui-form-preview__label">
-                    <icon name="编号" :scale="2.5" color="#47dd1f"></icon>
-                  </label> 
-                  <span class="weui-form-preview__value">1000101</span>
-                </div>
-                <div class="weui-form-preview__item">
-                  <label class="weui-form-preview__label">
-                    <icon name="时间" :scale="2.5" color="#47dd1f"></icon>
-                  </label> 
-                  <span class="weui-form-preview__value">2017-7-21 11:00</span>
-                </div>
+        <div class="scrollPanel">
+          <scroller lock-y :scrollbar-x=false>
+            <div class="box1">
+              <div class="box1-item">
+                <icon name="pump" :scale="4" color="#47dd1f"></icon>
+                <p>停电</p>
+              </div>
+              <div class="box1-item">
+                <icon name="pump" :scale="4" color="#47dd1f"></icon>
+                <p>运行</p>
+              </div>
+              <div class="box1-item">
+                <icon name="battery" :scale="3.5" color="#47dd1f" style="padding-top:3px"></icon>
+                <p>正常</p>
+              </div>
+              <div class="box1-item">
+                <icon name="flow" :scale="4" color="#47dd1f"></icon>
+                <p>1.25m³/s</p>
+              </div>
+              <div class="box1-item">
+                <icon name="pressure" :scale="4" color="#47dd1f"></icon>
+                <p>110kPa</p>
+              </div>
+              <div class="box1-item">
+                <icon name="voltage" :scale="4" color="#47dd1f"></icon>
+                <p>20V</p>
+              </div>
+              <div class="box1-item">
+                <icon name="current" :scale="4" color="#47dd1f"></icon>
+                <p>20A</p>
+              </div>
+              <div class="box1-item">
+                <icon name="power" :scale="4" color="#47dd1f"></icon>
+                <p>300W</p>
+              </div>
+              <div class="box1-item">
+                <icon name="energy" :scale="4" color="#47dd1f"></icon>
+                <p>100kJ</p>
+              </div>
+              <div class="box1-item">
+                <icon name="gateway" :scale="4" color="#47dd1f"></icon>
+                <p>在线</p>
+              </div>
+              <div class="box1-item">
+                <icon name="signal3" :scale="4" color="#47dd1f"></icon>
+                <p>良好</p>
               </div>
             </div>
-            <!-- <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview> -->
+          </scroller>
+        </div>
+        <group>
+          <icon class="running" name="running" :scale="3.5" color="#47dd1f"></icon>
+          <grid class="sysInfo" :rows="5">
+            <grid-item class="statusItem" label1="轮灌编号">
+              <icon name="num" :scale="3.5" color="#47dd1f"></icon>
+              <p>101001</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="开始时间">
+              <icon name="startTime" :scale="3" color="#47dd1f"></icon>
+              <p>7-24 18:01</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="结束时间">
+              <icon name="endTime" :scale="3.3" color="#47dd1f"></icon>
+              <p>7-24 18:01</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="灌水量">
+              <icon name="volume" :scale="4" color="#47dd1f"></icon>
+              <p>500m³</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="灌水时长">
+              <icon name="irriTime" :scale="3.5" color="#47dd1f"></icon>
+              <p>5h</p>
+            </grid-item>
+          </grid>
+          <div class="irriItem">
+            <div class="name">
+              <span>
+                <icon class="triangle1" name="triangle1" :scale="2" color="#ec7777"></icon>
+                <icon class="triangle2" name="triangle2" :scale="2" color="#47dd1f"></icon>
+              </span>
+            </div>
+            <x-table class="valveList">
+                <tr>
+                  <td><icon name="name" :scale="3" color="#47dd1f"></icon></td>
+                  <td>阀1120</td>
+                </tr>
+                <tr>
+                  <td><icon name="flow" :scale="3" color="#47dd1f"></icon></td>
+                  <td>1.25m³/s</td>
+                </tr>
+                <tr>
+                  <td><icon name="pressure" :scale="3" color="#47dd1f"></icon></td>
+                  <td>110kPa</td>
+                </tr>
+                <tr>
+                  <td><icon name="voltage" :scale="3" color="#47dd1f"></icon></td>
+                  <td>20V</td>
+                </tr>
+                <tr>
+                  <td><icon name="time" :scale="3" color="#47dd1f"></icon></td>
+                  <td>7-24 14:15:16</td>
+                </tr>
+            </x-table>
+          </div>
+          <div class="irriItem">
+            <div class="name">
+              <span>
+                <icon class="triangle1" name="triangle1" :scale="1.5" color="#ec7777"></icon>
+                <icon class="triangle2" name="triangle2" :scale="1.5" color="#47dd1f"></icon>
+              </span>
+            </div>
+            <x-table class="valveList">
+                <tr>
+                  <td><icon name="name" :scale="3" color="#47dd1f"></icon></td>
+                  <td>阀2301</td>
+                </tr>
+                <tr>
+                  <td><icon name="flow" :scale="3" color="#47dd1f"></icon></td>
+                  <td>1.25m³/s</td>
+                </tr>
+                <tr>
+                  <td><icon name="pressure" :scale="3" color="#47dd1f"></icon></td>
+                  <td>110kPa</td>
+                </tr>
+                <tr>
+                  <td><icon name="voltage" :scale="3" color="#47dd1f"></icon></td>
+                  <td>20V</td>
+                </tr>
+                <tr>
+                  <td><icon name="time" :scale="3" color="#47dd1f"></icon></td>
+                  <td>7-24 14:15:16</td>
+                </tr>
+            </x-table>
           </div>
         </group>
         <group>
-          <cell class="title" title="下一轮灌组"></cell>
+          <icon class="running" name="waiting" :scale="3.5" color="#47dd1f"></icon>
           <x-input placeholder="请输入支管名称" class="weui-vcode addBranch">
             <x-button slot="right" type="primary" mini>添加支管</x-button>
           </x-input>
           <div class="irriItem">
-            <div class="name"><icon name="停止" :scale="4" color="red"></icon></div>
-            <cell-form-preview  class="curIrriList" :list="curIrriList"></cell-form-preview>
+            <div class="name">
+              <span>
+                <icon class="triangle1" name="triangle1" :scale="1.5" color="#ec7777"></icon>
+                <icon class="triangle2" name="triangle2" :scale="1.5" color="#47dd1f"></icon>
+              </span>
+            </div>
+            <x-table class="valveList">
+                <tr>
+                  <td><icon name="name" :scale="3" color="#47dd1f"></icon></td>
+                  <td>阀1021</td>
+                </tr>
+                <tr>
+                  <td><icon name="flow" :scale="3" color="#47dd1f"></icon></td>
+                  <td>1.25m³/s</td>
+                </tr>
+                <tr>
+                  <td><icon name="pressure" :scale="3" color="#47dd1f"></icon></td>
+                  <td>110kPa</td>
+                </tr>
+                <tr>
+                  <td><icon name="voltage" :scale="3" color="#47dd1f"></icon></td>
+                  <td>20V</td>
+                </tr>
+                <tr>
+                  <td><icon name="time" :scale="3" color="#47dd1f"></icon></td>
+                  <td>7-24 14:15:16</td>
+                </tr>
+            </x-table>
           </div>
         </group>
         
@@ -113,7 +231,7 @@
 </template>
 
 <script>
-import { Group, Grid, GridItem, Cell, CellFormPreview, Drawer, Actionsheet, ViewBox, XInput, XButton, XHeader, Loading, TransferDom, Swiper, Blur } from 'vux'
+import { Group, Grid, GridItem, Cell, CellFormPreview, Drawer, Actionsheet, ViewBox, XInput, XButton, XHeader, XTable, Loading, TransferDom, Swiper, Blur } from 'vux'
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -131,6 +249,7 @@ export default {
     XInput,
     XButton,
     XHeader,
+    XTable,
     Loading,
     Swiper,
     Blur,
@@ -143,6 +262,9 @@ export default {
     changeSystem (index) {
       this.curSystem = +index
     },
+    logout(){
+      this.$router.push("/");
+    }
   },
   mounted () {
     
@@ -194,7 +316,7 @@ export default {
         value: '1000101'
       }, {
         label: '开始时间',
-        value: '2017-7-21 11:00'
+        value: '7-21 11:00'
       }],
       menus: {
         '0': '当前系统1',
@@ -229,28 +351,29 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .service .vux-label{ background: url(../assets/service.png) 30px center no-repeat;}
 .setting .vux-label{ background: url(../assets/setup.png) 30px center no-repeat;}
 .exit{ position: absolute; left:0; bottom:0px; width:170px; margin: 15px; }
-.title{ border-top: 1px solid #D9D9D9; }
-.addBranch{ border-top: 1px solid #D9D9D9; padding: 7px 15px!important; }
-.irriItem{ text-align:left;border-top: 1px solid #D9D9D9;border-bottom: 1px solid #D9D9D9; overflow: hidden; }
-.irriItem>div{display:inline-block;vertical-align:middle;text-align:center;height:100%;width:60%; }
-.irriItem>div.name{ width: 100px;text-align:center;padding-left:15px; }
-.irriItem>div.curIrriList{ border-left: 1px solid #D9D9D9; }
-.statusItem{ height: 100px; }
-
-.demo-icon-22 { font-family: 'vux-demo'; font-size: 22px; color: #888; }
-.demo-icon-22:before { content: attr(icon); }
-.vux-demo-header-box { z-index: 100; position: absolute; width: 100%; left: 0; top: 0; }
-@font-face {
-  font-family: 'vux-demo';  /* project id 70323 */
-  src: url('https://at.alicdn.com/t/font_h1fz4ogaj5cm1jor.eot');
-  src: url('https://at.alicdn.com/t/font_h1fz4ogaj5cm1jor.eot?#iefix') format('embedded-opentype'),
-  url('https://at.alicdn.com/t/font_h1fz4ogaj5cm1jor.woff') format('woff'),
-  url('https://at.alicdn.com/t/font_h1fz4ogaj5cm1jor.ttf') format('truetype'),
-  url('https://at.alicdn.com/t/font_h1fz4ogaj5cm1jor.svg#iconfont') format('svg');
+.addBranch{ padding: 7px 15px!important; }
+.irriItem{ position:relative; height:175px; text-align:left; overflow: hidden; }
+.irriItem:nth-child(odd){  }
+.irriItem:after, .title:after, .addBranch:after {content: " ";position: absolute;left: 0;bottom: 0;right: 0;height: 1px;border-bottom: 1px solid #D9D9D9;color: #D9D9D9;-webkit-transform-origin: 0 0;-ms-transform-origin: 0 0;transform-origin: 0 0;-webkit-transform: scaleY(0.5);-ms-transform: scaleY(0.5);transform: scaleY(0.5);
 }
-.demo-icon { font-family: 'vux-demo'; font-size: 20px; color: #04BE02; }
-.demo-icon-big { font-size: 28px; }
-.demo-icon:before { content: attr(icon); }
+.irriItem>div{ float:left; vertical-align:middle;text-align:center;height:100%;}
+.irriItem>div.name{ position:relative;width:30%;line-height:175px;text-align:center;vertical-align:middle; }
+.irriItem>div.name>span{ display:inline-block; vertical-align:middle }
+.irriItem>div.curIrriList{ border-left: 1px solid #D9D9D9; }
+.irriItem>div.name .svg-icon{ display: block!important;}
+.triangle2{ margin: -1px 0;}
+.statusItem{ display:table-cell; height: 100px;}
+.statusItem svg{ height:35px; }
+.valveList{ float: left; width: 70%!important; line-height: 2.1!important;}
+.valveList:before{ content: " ";position: absolute;left: 0;bottom: 0;width: 1px;height:100%;border-left: 1px solid #D9D9D9;color: #D9D9D9;-webkit-transform-origin: 0 0;-ms-transform-origin: 0 0;transform-origin: 0 0;-webkit-transform: scaleX(0.5);-ms-transform: scaleX(0.5);transform: scaleX(0.5) }
+.valveList:after{ border-top: none!important;}
+.valveList svg{ display: inline-block; vertical-align:middle; }
+.valveList td:nth-child(1){ width: 50px; }
+.valveList td:nth-child(2){ text-align: left; padding-left: 10px; }
+
+.running{ padding-top: 10px; }
+.sysInfo p{ font-size: 13px; color: #333; padding-top: 5px;}
+
 .router-view { width: 100%; top: 46px; }
 .vux-pop-out-enter-active,
 .vux-pop-out-leave-active,
@@ -269,4 +392,13 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .vux-pop-in-enter { opacity: 0; transform: translate3d(100%, 0, 0); }
 .vux-pop-in-leave-active { opacity: 0; transform: translate3d(-100%, 0, 0); }
 .menu-title { color: #888; }
+
+.scrollPanel{ overflow: hidden;overflow-x:auto;}
+.box1 { position: relative; width:660px; height:80px;}
+.box1-item{ position:relative; width: 60px; height: 70px; display: inline-block; float: left; text-align: center; padding-top: 10px; }
+.box1-item>p{ font-size: 13px; }
+.box1-item:before { content: " ";position: absolute;left: 0;bottom: 0;width:100%;height:1px;border-bottom: 1px solid #D9D9D9;color: #D9D9D9;-webkit-transform-origin: 0 0;-ms-transform-origin: 0 0;transform-origin: 0 0;-webkit-transform: scaleY(0.5);-ms-transform: scaleY(0.5);transform: scaleY(0.5) }
+.box1-item:after { content: " ";position: absolute;right: 0;bottom: 0;width: 1px;height:100%;border-right: 1px solid #D9D9D9;color: #D9D9D9;-webkit-transform-origin: 0 0;-ms-transform-origin: 0 0;transform-origin: 0 0;-webkit-transform: scaleX(0.5);-ms-transform: scaleX(0.5);transform: scaleX(0.5) }
+.box1-item:first-child { margin-left: 0;  }
+.box1-item:first-child:after {  }
 </style>

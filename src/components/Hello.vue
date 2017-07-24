@@ -1,28 +1,27 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-      <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+  <div>
+    <p class="logo"><img src="../assets/logo.png" alt=""></p>
+    <p class="title">轮灌管理系统</p>
+    <group>
+      <x-input placeholder="请输入手机号" type="tel" pattern="[0-9]*">
+        <icon class="icon" slot="label" name="user" :scale="2.5" color="#acacac" required></icon>
+      </x-input>
+      <x-input class="password" placeholder="请输入密码" type="password">
+        <icon class="icon" slot="label" name="password" :scale="2.5" color="#acacac" required></icon>
+      </x-input>
+    </group>
+    <x-button type="primary">登录</x-button>
   </div>
 </template>
 
 <script>
+import { Group, XInput, XButton } from 'vux'
 export default {
-  name: 'hello',
+  components: {
+    Group,
+    XInput,
+    XButton
+  },
   data() {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -32,22 +31,28 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
+<style>
+body{ background-color: #4b4c4b ;}
+.title{ color: #fff; font-size: 30px;}
+.logo{ width: 80px; height: 80px; margin: 50px auto; background-color: #4b4c4b; }
+.logo>img{ width: 100%; height: 100%; }
+.svg-icon{ vertical-align: middle; margin-right: 10px; }
+.weui-input{ font-size: 16px!important; padding: 5px 15px; vertical-align: bottom; }
+.weui-btn_primary {background-color: #f29f07!important; width: 90%!important; margin: 40px auto;}
+.password:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    border-bottom: 1px solid #D9D9D9;
+    color: #D9D9D9;
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    -ms-transform: scaleY(0.5);
+    transform: scaleY(0.5);
 }
 </style>
