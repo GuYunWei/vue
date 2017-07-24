@@ -20,13 +20,13 @@
           </blur>
         </div>
         <group>
-          <cell class="home" title="主页" link="/demo" @click.native="drawerVisibility = false">
+          <cell class="home" title="主页" link="/home" @click.native="drawerVisibility = false">
           </cell>
-          <cell class="service" title="灌水计划" link="project/donate" @click.native="drawerVisibility = false">
+          <cell class="water" title="灌水计划" link="/water" @click.native="drawerVisibility = false">
           </cell>
-          <cell class="service" title="轮灌计划" link="project/donate" @click.native="drawerVisibility = false">
+          <cell class="plans" title="轮灌计划" link="project/donate" @click.native="drawerVisibility = false">
           </cell>
-          <cell class="service" title="轮灌编制" link="project/donate" @click.native="drawerVisibility = false">
+          <cell class="compile" title="轮灌编制" link="project/donate" @click.native="drawerVisibility = false">
           </cell>
           <cell class="setting" title="设置" link="/setting" @click.native="drawerVisibility = false">
           </cell>
@@ -39,11 +39,11 @@
       <!-- main content -->
       <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
         <x-header slot="header"
-        style="width:100%;position:absolute;left:0;top:0;z-index:100;"
-        :left-options="leftOptions"
-        :right-options="rightOptions"
-        :transition="headerTransition"
-        @on-click-more="onClickMore">
+         style="width:100%;position:absolute;left:0;top:0;z-index:100;"
+         :left-options="leftOptions"
+         :right-options="rightOptions"
+         :transition="headerTransition"
+         @on-click-more="onClickMore">
           <span v-if="route.path === '/' || route.path === '/home'" slot="overwrite-left" @click="drawerVisibility = !drawerVisibility">
             <x-icon type="navicon" size="35" class="leftMenu"></x-icon>
           </span>
@@ -156,8 +156,8 @@
           <div class="irriItem">
             <div class="name">
               <span>
-                <icon class="triangle1" name="triangle1" :scale="1.5" color="#ec7777"></icon>
-                <icon class="triangle2" name="triangle2" :scale="1.5" color="#47dd1f"></icon>
+                <icon class="triangle1" name="triangle1" :scale="2" color="#ec7777"></icon>
+                <icon class="triangle2" name="triangle2" :scale="2" color="#47dd1f"></icon>
               </span>
             </div>
             <x-table class="valveList">
@@ -186,6 +186,28 @@
         </group>
         <group>
           <icon class="running" name="waiting" :scale="3.5" color="#47dd1f"></icon>
+          <grid class="sysInfo" :rows="5">
+            <grid-item class="statusItem" label1="轮灌编号">
+              <icon name="num" :scale="3.5" color="#47dd1f"></icon>
+              <p>101001</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="开始时间">
+              <icon name="startTime" :scale="3" color="#47dd1f"></icon>
+              <p>7-24 18:01</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="结束时间">
+              <icon name="endTime" :scale="3.3" color="#47dd1f"></icon>
+              <p>7-24 18:01</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="灌水量">
+              <icon name="volume" :scale="4" color="#47dd1f"></icon>
+              <p>500m³</p>
+            </grid-item>
+            <grid-item class="statusItem" label1="灌水时长">
+              <icon name="irriTime" :scale="3.5" color="#47dd1f"></icon>
+              <p>5h</p>
+            </grid-item>
+          </grid>
           <x-input placeholder="请输入支管名称" class="weui-vcode addBranch">
             <x-button slot="right" type="primary" mini>添加支管</x-button>
           </x-input>
@@ -231,7 +253,7 @@
 </template>
 
 <script>
-import { Group, Grid, GridItem, Cell, CellFormPreview, Drawer, Actionsheet, ViewBox, XInput, XButton, XHeader, XTable, Loading, TransferDom, Swiper, Blur } from 'vux'
+import { Group, Grid, GridItem, Cell, CellFormPreview, Drawer, Actionsheet, ViewBox, XInput, XButton, XHeader, XTable, Loading, TransferDom, Swiper, Blur, Scroller } from 'vux'
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -253,6 +275,7 @@ export default {
     Loading,
     Swiper,
     Blur,
+    Scroller,
     Actionsheet
   },
   methods: {
@@ -347,9 +370,13 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .weui-form-preview__label{ height: 30px; text-align: center;}
 
 .username{ color: #fff; }
+.vux-label{ padding-left: 50px; }
 .home .vux-label{ background: url(../assets/home.png) 30px center no-repeat;}
 .service .vux-label{ background: url(../assets/service.png) 30px center no-repeat;}
-.setting .vux-label{ background: url(../assets/setup.png) 30px center no-repeat;}
+.water .vux-label{ background: url(../assets/water.png) 30px center no-repeat;}
+.plans .vux-label{ background: url(../assets/plans.png) 30px center no-repeat;}
+.compile .vux-label{ background: url(../assets/compile.png) 30px center no-repeat;}
+.setting .vux-label{ background: url(../assets/setting.png) 30px center no-repeat;}
 .exit{ position: absolute; left:0; bottom:0px; width:170px; margin: 15px; }
 .addBranch{ padding: 7px 15px!important; }
 .irriItem{ position:relative; height:175px; text-align:left; overflow: hidden; }
