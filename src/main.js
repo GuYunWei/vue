@@ -39,6 +39,16 @@ router.beforeEach(function (to, from, next) {
     store.commit('updateDirection', {direction: 'forward'})
   }
 
+  //这里判断用户是否登录，我例子中是验证本地存储是否有token
+  // if (!localStorage.token) {
+  //     next({
+  //         path: '/login',
+  //         query: { redirect: to.fullPath }
+  //     })
+  // } else {
+  //     next()
+  // }
+
   if (/\/http/.test(to.path)) {
     let url = to.path.split('http')[1]
     window.location.href = `http${url}`

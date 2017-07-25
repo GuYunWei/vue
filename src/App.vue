@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view class="router-view"></router-view>
     <loading v-model="isLoading"></loading>
   </div>
 </template>
@@ -23,10 +23,10 @@ export default {
 
 <style lang="less">
 @import '~vux/src/styles/reset.less';
-</style>
+@import '~vux/src/styles/1px.less';
+@import '~vux/src/styles/tap.less';
 
-<style>
-body{ background-color: #fbf9fe; }
+html, body{ background-color: #fbf9fe; height:100%; }
 #app {
   width:100%;
   height: 100%;
