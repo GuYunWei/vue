@@ -57,25 +57,13 @@ const router = new Router({
         component: function (resolve) {
           require(['@/components/Setting.vue'], resolve)
         },
-      }]
-    },
-    {
-      path: '/setting/personal',
-      name: 'personal',
-      component: Home,
-      children: [{
-        path: '/setting/personal',
+      },{
+        path: 'personal',
         component: function (resolve) {
           require(['@/components/Personal.vue'], resolve)
         },
-      }]
-    },
-    {
-      path: '/setting/modify',
-      name: 'modify',
-      component: Home,
-      children: [{
-        path: '/setting/modify',
+      },{
+        path: 'modify',
         component: function (resolve) {
           require(['@/components/Modify.vue'], resolve)
         },

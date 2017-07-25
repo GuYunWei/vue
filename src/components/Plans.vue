@@ -275,11 +275,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .planSwiper{ height: 100%; }
 .planSwiper table{ margin-bottom: 0.4rem; }
-.planSwiper .vux-swiper{ height: 100%!important; background-color: transparent!important;}
-.planSwiper .vux-swiper-item{ overflow-y: auto; }
 .statusItem{ display:table-cell; height: 2.1rem; padding: 0.2rem 0!important; }
 .statusItem svg{ height:35px; }
 .statusItem p{ font-size: 0.35rem; color: #333; margin-top: -0.4rem}

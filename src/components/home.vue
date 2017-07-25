@@ -166,6 +166,8 @@ export default {
 body { background-color: #fbf9fe;width: 10rem!important; height:100%; margin: 0 auto; }
 html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .leftMenu { fill:#fff;position:relative;top:-8px;left:-3px; }
+.planSwiper .vux-swiper, .irriSwiper .vux-swiper{ height: 100%!important; }
+.planSwiper .vux-swiper-item{ overflow-y: auto; }
 .vux-swiper-desc{ height:40px!important; background-image: none!important; line-height: 40px!important; padding: 0!important; }
 .vux-header-title{ margin: 0 60px!important; }
 .drawer-left .weui-cells:before,
