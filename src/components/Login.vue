@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="loginPanel">
     <p class="logo"><img src="../assets/logo.png" alt=""></p>
     <p class="title">轮灌管理系统</p>
     <group>
-      <x-input placeholder="请输入手机号" type="tel" pattern="[0-9]*">
+      <x-input placeholder="请输入手机号" type="number" pattern="[0-9]*" is-type="china-mobile">
         <icon class="icon" slot="label" name="user" :scale="2.5" color="#acacac" required></icon>
       </x-input>
       <x-input class="password" placeholder="请输入密码" type="password">
@@ -43,7 +43,7 @@ export default {
 .logo>img{ width: 100%; height: 100%; }
 .svg-icon{ vertical-align: middle; margin-right: 10px; }
 .weui-input{ font-size: 16px!important; padding: 5px 15px; vertical-align: bottom; }
-.weui-btn_primary {background-color: #f29f07!important; width: 90%!important; margin: 40px auto;}
+.loginPanel .weui-btn_primary { width: 90%!important; margin: 40px auto;}
 .password:after {
     content: " ";
     position: absolute;

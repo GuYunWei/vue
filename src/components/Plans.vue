@@ -398,7 +398,7 @@ export default {
 <style scoped>
 .planSwiper{ height: 100%; }
 .planSwiper table{ margin-bottom: 0.4rem; }
-.statusItem{ display:table-cell; height: 2.1rem; padding: 0.2rem 0!important; }
+.statusItem{ display:table-cell; height: 1.9rem; padding: 0.2rem 0!important; }
 .statusItem svg{ height:35px; }
-.statusItem p{ font-size: 0.35rem; color: #333; margin-top: -0.4rem; line-height: 0.5rem }
+.statusItem p{ font-size: 0.35rem; color: #333; line-height: 0.5rem }
 </style>
