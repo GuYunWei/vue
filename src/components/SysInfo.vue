@@ -242,7 +242,7 @@
   .irriItem>div.curIrriList{ border-left: 1px solid #D9D9D9; }
   .irriItem>div.name .svg-icon{ display: block!important;}
   .triangle2{ margin: -1px 0;}
-  .statusItem{ display:table-cell; height: 100px; padding: 20px 0!important; }
+  .statusItem{ display:table-cell; height: 2.4rem; padding: 0.2rem 0!important; }
   .statusItem svg{ height:35px; }
   .valveList{ float: left; width: 70%!important; line-height: 2.1!important;}
   .valveList:before{ content: " ";position: absolute;left: 0;bottom: 0;width: 1px;height:100%;border-left: 1px solid #D9D9D9;color: #D9D9D9;-webkit-transform-origin: 0 0;-ms-transform-origin: 0 0;transform-origin: 0 0;-webkit-transform: scaleX(0.5);-ms-transform: scaleX(0.5);transform: scaleX(0.5) }

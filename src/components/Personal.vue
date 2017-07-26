@@ -35,10 +35,7 @@ export default {
 </script>
 
 <style>
-.personalInfo label.weui-label{ width: 3rem!important; text-align: left; }
-.sex .weui-cell__bd{ position: relative; }
-.sex .vux-label-desc{ position: absolute; right: 0.2rem; top: 0; font-size: 0.5rem;}
-.savePanel .weui-cells{ width: 9rem; margin: 1rem auto; }
+
 </style>
 
 <style scoped>

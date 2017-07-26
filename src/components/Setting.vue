@@ -16,14 +16,13 @@
 </template>
 
 <script>
-import { XHeader, Group, Cell, CellBox, XButton } from 'vux'
+import { XHeader, Group, Cell, XButton } from 'vux'
 
 export default {
 	components: {
 		XHeader,
 		Group,
 		Cell,
-		CellBox,
 		XButton,
 	}
 }

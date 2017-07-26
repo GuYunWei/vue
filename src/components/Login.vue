@@ -10,7 +10,7 @@
         <icon class="icon" slot="label" name="password" :scale="2.5" color="#acacac" required></icon>
       </x-input>
     </group>
-    <x-button type="primary">登录</x-button>
+    <x-button type="primary" @click.native="login">登录</x-button>
   </div>
 </template>
 
@@ -22,6 +22,12 @@ export default {
     XInput,
     XButton
   },
+  methods: {
+    login(){
+      console.log(123)
+      this.$router.push("/home");
+    }
+  },
   data() {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -32,8 +38,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-body{ background-color: #4b4c4b ;}
-.title{ color: #fff; font-size: 30px;}
+.title{ color: #333; font-size: 30px;}
 .logo{ width: 80px; height: 80px; margin: 50px auto; background-color: #4b4c4b; }
 .logo>img{ width: 100%; height: 100%; }
 .svg-icon{ vertical-align: middle; margin-right: 10px; }

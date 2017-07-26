@@ -166,10 +166,10 @@ export default {
 body { background-color: #fbf9fe;width: 10rem!important; height:100%; margin: 0 auto; }
 html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .leftMenu { fill:#fff;position:relative;top:-8px;left:-3px; }
-.planSwiper .vux-swiper, .irriSwiper .vux-swiper{ height: 100%!important; }
+.planSwiper .vux-swiper, .irriSwiper .vux-swiper{ height: 100%!important; background-color: #fbf9fe!important; }
 .planSwiper .vux-swiper-item{ overflow-y: auto; }
 .vux-swiper-desc{ height:40px!important; background-image: none!important; line-height: 40px!important; padding: 0!important; }
-.vux-header-title{ margin: 0 60px!important; }
+.vux-header-title{ margin: 0 65px!important; }
 .drawer-left .weui-cells:before,
 .drawer-left .weui-cells:after,
 .drawer-left .weui-cell:before{ border: none!important; }
@@ -185,6 +185,10 @@ html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .compile .vux-label{ background: url(../assets/compile.png) 30px center no-repeat;}
 .setting .vux-label{ background: url(../assets/setting.png) 30px center no-repeat;}
 .exit{ position: absolute; left:0; bottom:0px; width:170px; margin: 15px; }
+.personalInfo label.weui-label{ width: 3rem!important; text-align: left; }
+.sex .weui-cell__bd{ position: relative; }
+.sex .vux-label-desc{ position: absolute; right: 0.2rem; top: 0; font-size: 0.5rem;}
+.savePanel .weui-cells{ width: 9rem!important; margin: 1rem auto; }
 
 .router-view { width: 100%; }
 .vux-pop-out-enter-active,
