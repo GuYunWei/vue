@@ -48,6 +48,17 @@ const router = new Router({
       }]
     },
     {
+      path: '/irrigate',
+      name: 'irrigate',
+      component: Home,
+      children: [{
+        path: '/irrigate',
+        component: function (resolve) {
+          require(['@/components/Irrigate.vue'], resolve)
+        },
+      }]
+    },
+    {
       path: '/setting',
       name: 'setting',
       component: Home,

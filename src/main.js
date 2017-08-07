@@ -7,7 +7,10 @@ import router from './router';
 import store from './store';
 import { sync } from 'vuex-router-sync';
 import Icon from 'vue-svg-icon/Icon.vue';
+import { ToastPlugin } from 'vux'
+import Tool from "@/utils/Tool" 
 
+Vue.use(ToastPlugin)
 Vue.component('icon', Icon)
 FastClick.attach(document.body);
 Vue.config.productionTip = false;
@@ -40,14 +43,14 @@ router.beforeEach(function (to, from, next) {
   }
 
   //这里判断用户是否登录，我例子中是验证本地存储是否有token
-  // if (!localStorage.token) {
-  //     next({
-  //         path: '/login',
-  //         query: { redirect: to.fullPath }
-  //     })
-  // } else {
-  //     next()
-  // }
+  if (to.path !== '/' && !Tool.getCookie("Token")) {
+      next({
+          path: '/',
+          query: { redirect: to.fullPath }
+      })
+  } else {
+      next()
+  }
 
   if (/\/http/.test(to.path)) {
     let url = to.path.split('http')[1]
@@ -58,7 +61,7 @@ router.beforeEach(function (to, from, next) {
 })
 
 router.afterEach(function (to) {
-  store.commit('updateLoadingStatus', {isLoading: false})
+  // store.commit('updateLoadingStatus', {isLoading: false})
 })
 
 /* eslint-disable no-new */

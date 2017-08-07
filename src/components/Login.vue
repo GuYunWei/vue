@@ -3,34 +3,93 @@
     <p class="logo"><img src="../assets/logo.png" alt=""></p>
     <p class="title">轮灌管理系统</p>
     <group>
-      <x-input placeholder="请输入手机号" type="number" pattern="[0-9]*" is-type="china-mobile">
-        <icon class="icon" slot="label" name="user" :scale="2.5" color="#acacac" required></icon>
+      <x-input placeholder="请输入账号" type="text" pattern="[0-9]*" required ref="username" v-model="loginName">
+        <icon class="icon" slot="label" name="user" :scale="2.5"></icon>
       </x-input>
-      <x-input class="password" placeholder="请输入密码" type="password">
-        <icon class="icon" slot="label" name="password" :scale="2.5" color="#acacac" required></icon>
+      <x-input placeholder="请输入密码" class="password" type="password" ref="password" required v-model="loginPass">
+        <icon class="icon" slot="label" name="password" :scale="2.5"></icon>
       </x-input>
     </group>
+    <check-icon class="remember" :value.sync="remember" type="plain">记住密码?</check-icon>
     <x-button type="primary" @click.native="login">登录</x-button>
   </div>
 </template>
 
 <script>
-import { Group, XInput, XButton } from 'vux'
+import { Group, XInput, XButton, CheckIcon } from 'vux'
+import axios from "axios"
+import { URL } from "@/utils/API"
+import Tool from "@/utils/Tool"
+
 export default {
   components: {
     Group,
     XInput,
-    XButton
+    XButton,
+    CheckIcon,
+  },
+  mounted(){
+    this.$store.commit('updateLoadingStatus', {isLoading: false})
+    const remember = Tool.getCookie("remember");
+    if(remember == "true"){
+      this.remember = true;
+      this.loginName = Tool.getCookie("loginName");
+      this.loginPass = Tool.getCookie("loginPass");
+    }
   },
   methods: {
     login(){
-      console.log(123)
-      this.$router.push("/home");
-    }
+      const _this = this;
+      const username = this.$refs.username;
+      const password = this.$refs.password;
+      if(!username.currentValue || !password.currentValue){
+        Tool.toast(this, '请输入手机号、密码');
+      }
+      if(username.valid && password.valid){
+        if(_this.remember){
+          Tool.setCookie("remember", _this.remember, 1);
+          Tool.setCookie("loginName", username.currentValue, 1);
+          Tool.setCookie("loginPass", password.currentValue, 1);
+        }else{
+          Tool.setCookie("remember", _this.remember, -1);
+          Tool.setCookie("loginName", username.currentValue, -1);
+          Tool.setCookie("loginPass", password.currentValue, -1);
+        }
+        axios.get(URL.LOGIN + "?username="+username.currentValue+"&password="+password.currentValue+"")
+          .then(function (response) {
+            if(response.data.status ==  true){
+              Tool.setCookie("userId", response.data.result.id, 1);
+              Tool.setCookie("userName", response.data.result.userName, 1);
+              Tool.setCookie("isadmin", response.data.result.isAdmin, 1);
+              Tool.setCookie("Token", response.data.result.openToken, 1);
+              Tool.setCookie("unismName", response.data.result.account, 1);
+              Tool.setCookie("apiKey", response.data.result.apiKey, 1);
+              Tool.setCookie("groupId", response.data.result.groupId, 1);
+              Tool.setCookie("ConsoleToken", response.data.result.token, 1);
+              Tool.setCookie("userNum", response.data.result.userNum, 1);
+              Tool.setCookie("groupName", response.data.result.groupName, 1);
+              Tool.setCookie("isLeader", response.data.result.leader, 1);
+              _this.$router.push("/home");
+            }
+            Tool.toast(_this, response.data.message);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    },
   },
   data() {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      remember: false,
+      loginName: "",
+      loginPass: "",
+      // isMobile: function (value) {
+      //   return {
+      //     valid: /^1[3|4|5|7|8]\d{9}$/.test(value),
+      //     msg: '请输入合法手机号'
+      //   }
+      // },
     };
   },
 };
@@ -38,12 +97,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+body { background-color: #fbf9fe; width: 10rem!important; height:100%; margin: 0 auto; }
 .title{ color: #333; font-size: 30px;}
-.logo{ width: 80px; height: 80px; margin: 50px auto; background-color: #4b4c4b; }
+.logo{ width: 80px; height: 80px; margin: 0 auto 50px; background-color: #4b4c4b; }
 .logo>img{ width: 100%; height: 100%; }
-.svg-icon{ vertical-align: middle; margin-right: 10px; }
+.loginPanel{ padding-top: 50px; }
+.loginPanel .svg-icon{ vertical-align: middle; margin-right: 10px; }
 .weui-input{ font-size: 16px!important; padding: 5px 15px; vertical-align: bottom; }
-.loginPanel .weui-btn_primary { width: 90%!important; margin: 40px auto;}
+.loginPanel .weui-btn_primary { width: 90%!important; margin: 1.5rem auto;}
+.remember{ float: right; margin-right: 0.4rem; padding-top: 0.2rem; font-size: 0.4rem; }
 .password:after {
     content: " ";
     position: absolute;

@@ -1,97 +1,72 @@
 <template>
-  <div style="height:100%;">
-    <swiper class="irriSwiper" direction="horizontal" v-model="curIndex" :min-moving-distance="20" :show-dots="false" @on-index-change="changePlan">
-      <swiper-item>
-      	<group>
-      		<x-input title="轮灌名称" placeholder="请输入轮灌名称"></x-input>
-		      <x-input title="轮灌编号" placeholder="请输入轮灌编号"></x-input>
-          <cell class="selBranch" title="支管列表" value="选择支管" is-link @click.native="show1=true"></cell>
-          <flexbox :gutter="0" wrap="wrap">
-            <flexbox-item :span="1/3" v-for="item in branchListValue" :key="item"><div class="flex-demo">{{fetchBrancchName(item)}}</div></flexbox-item>
-          </flexbox>
-        </group>
-        <div v-transfer-dom>
-          <popup v-model="show1">
-            <!-- group already has a top border, so we need to hide header's bottom border-->
-            <popup-header
-              left-text="取消"
-              right-text="保存"
-              title="请选择支管"
-              :show-bottom-border="false"
-              @on-click-left="show1 = false"
-              @on-click-right="show1 = false"></popup-header>
-            <group class="branchList" gutter="0">
-              <checklist :options="branchList" v-model="branchListValue" @on-change="listChange"></checklist>
-            </group>
-          </popup>
-        </div>
-        <group class="savePanel">
-          <x-button type="primary" @click.native="save">保存</x-button>
-        </group>
-      </swiper-item>
-      <swiper-item>
-        <group>
-          <x-input title="轮灌名称" placeholder="请输入轮灌名称"></x-input>
-          <x-input title="轮灌编号" placeholder="请输入轮灌编号"></x-input>
-          <cell class="selBranch" title="支管列表" value="选择支管" is-link @click.native="show1=true"></cell>
-          <flexbox :gutter="0" wrap="wrap">
-            <flexbox-item :span="1/3" v-for="item in branchListValue" :key="item"><div class="flex-demo">{{fetchBrancchName(item)}}</div></flexbox-item>
-          </flexbox>
-        </group>
-        <div v-transfer-dom>
-          <popup v-model="show1">
-            <!-- group already has a top border, so we need to hide header's bottom border-->
-            <popup-header
-              left-text="取消"
-              right-text="保存"
-              title="请选择支管"
-              :show-bottom-border="false"
-              @on-click-left="show1 = false"
-              @on-click-right="show1 = false"></popup-header>
-            <group class="branchList" gutter="0">
-              <checklist :options="branchList" v-model="branchListValue" @on-change="listChange"></checklist>
-            </group>
-          </popup>
-        </div>
-        <group class="savePanel">
-          <x-button type="primary" @click.native="save">保存</x-button>
-        </group>
-      </swiper-item>
-      <swiper-item>
-        <group>
-          <x-input title="轮灌名称" placeholder="请输入轮灌名称"></x-input>
-          <x-input title="轮灌编号" placeholder="请输入轮灌编号"></x-input>
-          <cell class="selBranch" title="支管列表" value="选择支管" is-link @click.native="show1=true"></cell>
-          <flexbox :gutter="0" wrap="wrap">
-            <flexbox-item :span="1/3" v-for="item in branchListValue" :key="item"><div class="flex-demo">{{fetchBrancchName(item)}}</div></flexbox-item>
-          </flexbox>
-        </group>
-        <div v-transfer-dom>
-          <popup v-model="show1">
-            <!-- group already has a top border, so we need to hide header's bottom border-->
-            <popup-header
-              left-text="取消"
-              right-text="保存"
-              title="请选择支管"
-              :show-bottom-border="false"
-              @on-click-left="show1 = false"
-              @on-click-right="show1 = false"></popup-header>
-            <group class="branchList" gutter="0">
-              <checklist :options="branchList" v-model="branchListValue" @on-change="listChange"></checklist>
-            </group>
-          </popup>
-        </div>
-        <group class="savePanel">
-          <x-button type="primary" @click.native="save">保存</x-button>
-        </group>
-      </swiper-item>
-    </swiper>
-  </div>
+  <scroller lock-x scrollbar-y use-pulldown :pulldown-config="{content:'下拉刷新',downContent:'下拉刷新',upContent:'释放刷新',loadingContent:'加载中'}" height="100%" @on-pulldown-loading="loadStatus" v-model="status">
+    <div>
+      <swiper class="irriSwiper" direction="horizontal" v-model="curIndex" :min-moving-distance="20" :show-dots="false" @on-index-change="changePlan" :threshold="100">
+        <swiper-item v-if="sysList" v-for="item in sysList" :key="item">
+        	<x-table v-if="item.rotList && item.rotList.length > 0" v-for="subItem in item.rotList" :key="subItem" :cell-bordered="false" style="background-color:#fff;">
+            <thead>
+              <tr>
+                <th colspan="6">{{subItem.rgName}}</th>
+              </tr>
+              <tr>
+                <th>支管名称</th>
+                <th>显示名称</th>
+                <th>通道</th>
+              </tr>
+            </thead>
+              <tbody>
+                <tr v-if="subItem.branchVOs && subItem.branchVOs.length > 0" v-for="(subItem2, index2) in subItem.branchVOs" :key="index2">
+                  <td>{{subItem2.name}}</td>
+                  <td>{{subItem2.name}}</td>
+                  <td>{{subItem2.valveCoremarkrol == "P2" ? "阀1" : "阀2"}}</td>
+                </tr>
+              </tbody>
+          </x-table>
+          <div v-if="!item.rotList || item.rotList.length == 0" style="padding: 0.5rem;font-size:0.5rem">暂无轮灌编制</div>
+        </swiper-item>
+        <!-- <swiper-item>
+          <group>
+            <x-input title="轮灌名称" placeholder="请输入轮灌名称"></x-input>
+            <x-input title="轮灌编号" placeholder="请输入轮灌编号"></x-input>
+            <cell class="selBranch" title="支管列表" value="选择支管" is-link @click.native="show1=true"></cell>
+            <flexbox :gutter="0" wrap="wrap">
+              <flexbox-item :span="1/3" v-for="item in branchListValue" :key="item"><div class="flex-demo">{{fetchBrancchName(item)}}</div></flexbox-item>
+            </flexbox>
+          </group>
+          <div v-transfer-dom>
+            <popup v-model="show1">
+               group already has a top border, so we need to hide header's bottom border
+              <popup-header
+                left-text="取消"
+                right-text="保存"
+                title="请选择支管"
+                :show-bottom-border="false"
+                @on-click-left="show1 = false"
+                @on-click-right="show1 = false"></popup-header>
+              <group class="branchList" gutter="0">
+                <checklist :options="branchList" v-model="branchListValue" @on-change="listChange"></checklist>
+              </group>
+            </popup>
+          </div>
+          <group class="savePanel">
+            <x-button type="primary" @click.native="save">保存</x-button>
+          </group>
+        </swiper-item> -->
+      </swiper>
+    </div>
+    <!--pulldown slot-->
+    <div slot="pulldown" class="xs-plugin-pulldown-container xs-plugin-pulldown-down" style="position: absolute; width: 100%; height: 20px; line-height:20px; top: -40px; text-align: center;">
+      <span v-show="status.pulldownStatus === 'down'">下拉刷新</span>
+      <span v-show="status.pulldownStatus === 'up'">释放刷新</span>
+      <span v-show="status.pulldownStatus === 'loading'"><spinner type="ios-small"></spinner></span>
+    </div>
+  </scroller>
 </template>
 
 <script>
-import { Swiper, SwiperItem, Group, XInput, XButton, TransferDom, XSwitch, PopupHeader, Popup, Radio, Cell, Flexbox, FlexboxItem, Checklist } from 'vux'
+import { Swiper, SwiperItem, Group, XInput, XButton, TransferDom, XSwitch, PopupHeader, Popup, Radio, Cell, Flexbox, FlexboxItem, Checklist, XTable, Scroller, Spinner } from 'vux'
 import { mapState, mapActions } from 'vuex'
+import $ from "webpack-zepto";
 
 export default {
   directives: {
@@ -111,10 +86,19 @@ export default {
     Flexbox,
     FlexboxItem,
     Checklist,
+    XTable,
+    Scroller,
+    Spinner,
+  },
+  mounted(){
+    this.fixSwiperHeight()
+    this.$store.commit('updateLoadingStatus', {isLoading: false})
   },
   computed: {
     ...mapState({
       curIndex: state => state.curIndex,
+      sysList: state => state.sysList,
+      isLoading: state => state.vux.isLoading,
     })
   },
   methods: {
@@ -129,16 +113,26 @@ export default {
           return item.key == branchId;
       });
       return arrayFilter[0].value
-    }
+    },
+    loadStatus () {
+      this.$emit('message');
+    },
+    fixSwiperHeight(){
+      const swiperItem = $(".irriSwiper .vux-swiper-item")[this.curIndex];
+      $(".irriSwiper").parent().height($(swiperItem).height()+46)
+    },
   },
   watch: {
     curIndex(curVal, oldVal){
-      console.log(curVal);
+      this.fixSwiperHeight()
     }
   },
   data () {
     return {
       show1: false,
+      status: {
+        pulldownStatus: 'default'
+      },
       branchList: [
           {
               key: '1',
@@ -192,7 +186,7 @@ export default {
 </script>
 
 <style scoped>
-.irriSwiper{ height: 100%; }
+.irriSwiper{ height: 100%; overflow: auto; }
 .irriSwiper .vux-swiper{ background-color: #fff!important; }
 .statusItem{ display:table-cell; height: 2.1rem; padding: 0.2rem 0!important; }
 .statusItem svg{ height:35px; }
@@ -206,4 +200,11 @@ export default {
   border-radius: 4px;
   background-clip: padding-box;
 }
+table{ font-size: 0.4rem;}
+.irriSwiper{ height: 100%; }
+.irriSwiper table{ margin-bottom: 0.4rem; }
+.irriSwiper table:last-child{ margin-bottom: 0; }
+.statusItem{ display:table-cell; height: 1.9rem; padding: 0.2rem 0!important; }
+.statusItem svg{ height:35px; }
+.statusItem p{ color: #333; line-height: 1; margin-top: -0.2rem; overflow: hidden;text-overflow:ellipsis;white-space: nowrap; }
 </style>

@@ -35,5 +35,5 @@ export default {
 .user-bg>.text { position: absolute; bottom: .42667rem; left: 2.29333rem; font-size: 16px; color: #fff; }
 .user-bg>.avatar { position: absolute; left: .42667rem; width: 1.6rem; height: 1.6rem; bottom: -.8rem; border: 2px solid #fff; border-radius: 50%; }
 .menus { height: 1rem; background-color: #fff; }
-.userPanel{ height: 100%; }
+.userPanel{ height: 93%; }
 </style>
