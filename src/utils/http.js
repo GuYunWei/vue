@@ -1,6 +1,7 @@
 import axios from "axios";
 import Tool from "@/utils/Tool"
 
+axios.defaults.baseURL = 'http://nmgjg.unilogger.cn:8070'
 //设置默认请求头
 axios.defaults.headers = {
 	'Content-Type': 'application/json'
@@ -14,38 +15,30 @@ axios.defaults.transformRequest = [function(data) {
 	return newData
 }]
 // 带cookie请求
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 
-export default class Axios {
-	static get (url, data) {
-	  return Axios.connect(url, {
+class Axios {
+	static get (url) {
+	  return data => Axios.connect({
 	    url: url,
 	    method: 'get',
 	    params: data,
 	  })
 	}
-	static post (url, data) {
-	  return Axios.connect(url,{
+	static post (url) {
+	  return data => Axios.connect({
 	      url: url,
 	      method: 'post',
-	      data: data,
+	      data
 	    }
 	  )
 	}
-	static connect (data) {
+	static async connect (data) {
 		var _this = this;
-	  return axios(data)
+	  await axios(data)
 	    .then(
 	      (response) => {
-	        if (response.status == 200) {
-	            if(response.data.status == true){
-								return response.data.result;
-	            }else{
-								Tool.toast(_this, response.data.message);
-	            }
-	        } else {
-	          Tool.toast(_this, response.data.message);
-	        }
+	        return response
 	      }
 	    )
 	    .catch((e) => {
@@ -53,3 +46,5 @@ export default class Axios {
 	    })
 	}
 }
+
+export const login = Axios.get('/privilege/access/login')

@@ -341,6 +341,8 @@ export default {
 [v-cloak] { display:none !important; }
 body { background-color: #fbf9fe;width: 10rem!important; height:100%; margin: 0 auto; }
 html, body { height: 100%; width: 100%; overflow-x: hidden; }
+.curRotInfo .vux-no-group-title{ margin-top: 0;}
+.progress:before{ border: none!important; }
 #vux_view_box_body{ padding-bottom: 0!important; }
 .leftMenu { fill:#fff;position:relative;top:-8px;left:-3px; }
 .bumpStatus{ overflow-y: visible!important; }

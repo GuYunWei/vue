@@ -84,7 +84,6 @@ export default {
   mounted(){
     this.fixSwiperHeight()
     this.$store.commit('updateLoadingStatus', {isLoading: false})
-    // this.A();
   },
   computed: {
     ...mapState({
@@ -104,19 +103,9 @@ export default {
       const swiperItem = $(".planSwiper .vux-swiper-item")[this.curIndex];
       $(".planSwiper").parent().height($(swiperItem).height()+46)
     },
-    A: function() {
-            setTimeout(() => { 
-                const swiperItem = $(".planSwiper .vux-swiper-item")[this.curIndex];
-                      $(".planSwiper").parent().height($(swiperItem).height()+46)
-                      $(".planSwiper, .planSwiper .vux-swiper").css('height', $(swiperItem).height()+46+'px!important')
-            }, 1000)
-        },
   },
   watch: {
     curIndex(curVal, oldVal){
-      this.fixSwiperHeight()
-    },
-    sysList(curVal, oldVal){
       this.fixSwiperHeight()
     },
   },

@@ -95,14 +95,17 @@
       </div>
       <swiper id="rotStatus" class="rotStatus" direction="horizontal" :min-moving-distance="20" :show-dots="false" @on-index-change="changeCurIrr" :threshold="100">
         <swiper-item v-for="(irrplan, index) in curIrrPlans" :key="index">
+          <cell class="progress" title="轮灌进度" primary="content">
+            <range v-model="irrplan.progressCurrent"  :min="0" :max="irrplan.progressMax" :range-bar-height="4" disabled></range>
+          </cell>
           <group class="curRotInfo" v-if="irrplan.curPlanExe" v-for="item in irrplan.curPlanExe" :key="item">
             <x-table class="irriTable" :cell-bordered="false" style="background-color:#fff;">
               <thead>
                 <tr>
-                  <th colspan="6">当前轮灌:{{item.rgName}}({{item.rgCode}})</th>
+                  <th colspan="7">当前轮灌:{{item.rgName}}({{item.rgCode}})</th>
                 </tr>
                 <tr>
-                  <th colspan="6">
+                  <th colspan="7">
                     <grid class="sysInfo" :rows="4">
                       <grid-item class="statusItem" label1="开始时间">
                         <img src="../assets/startTime.png" width="30" alt="">
@@ -130,6 +133,7 @@
                   <td>压力<br/>(m)</td>
                   <td>电压<br/>(v)</td>
                   <td>采集时间</td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
@@ -148,6 +152,7 @@
                     <img width='20' :src="require('../assets/'+branch.batterySts+'.png')" />
                   </td>
                   <td>{{branch.collTime.substr(5, 11)}}</td>
+                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
                 <tr class="affix" v-if="item.affixInfos.length > 0" v-for="affix in item.affixInfos" :key="irrplan">
                   <td>{{affix.name}}</td>
@@ -164,6 +169,7 @@
                     <img width='20' :src="require('../assets/'+affix.batterySts+'.png')" />
                   </td>
                   <td>{{affix.collTime.substr(5, 11)}}</td>
+                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
                 <!-- <tr>
                   <td>阀门02</td>
@@ -189,10 +195,10 @@
             <x-table class="irriTable" :cell-bordered="false" style="background-color:#fff;">
               <thead>
                 <tr>
-                  <th colspan="6">下一轮灌:{{irrplan.nextPlanExe.rgName}}({{irrplan.nextPlanExe.rgCode}})</th>
+                  <th colspan="7">下一轮灌:{{irrplan.nextPlanExe.rgName}}({{irrplan.nextPlanExe.rgCode}})</th>
                 </tr>
                 <tr>
-                  <th colspan="6">
+                  <th colspan="7">
                     <grid class="sysInfo" :rows="4">
                       <grid-item class="statusItem" label1="开始时间">
                         <img src="../assets/startTime.png" width="30" alt="">
@@ -214,10 +220,10 @@
                   </th>
                 </tr>
                 <tr>
-                  <td colspan="6" class="addBranch">
+                  <td colspan="7" class="addBranch">
                     <x-input placeholder="请输入支管名称" v-model="value3" class="weui-vcode" disabled @click.native="showBranchList">
                     </x-input>
-                      <x-button slot="right" type="primary" mini  @click.native="addBranch">添加支管</x-button>
+                      <x-button slot="right" type="primary" mini  @click.native="addBranch">设置支管</x-button>
                   </td>
                 </tr>
                 <tr class="title">
@@ -227,6 +233,7 @@
                   <td>压力<br/>(kPa)</td>
                   <td>电压<br/>(V)</td>
                   <td>采集时间</td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
@@ -245,6 +252,7 @@
                     <img width='20' :src="require('../assets/'+branch.batterySts+'.png')" />
                   </td>
                   <td>{{branch.collTime.substr(5, 11)}}</td>
+                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
                 <tr class="affix" v-if="irrplan.nextPlanExe.affixInfos.length > 0" v-for="affix in irrplan.nextPlanExe.affixInfos" :key="irrplan">
                   <td>{{affix.name}}</td>
@@ -261,6 +269,7 @@
                     <img width='20' :src="require('../assets/'+affix.batterySts+'.png')" />
                   </td>
                   <td>{{affix.collTime.substr(5, 11)}}</td>
+                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
               </tbody>
             </x-table>
@@ -451,7 +460,7 @@
 </template>
 
 <script>
-  import { Swiper, SwiperItem, Search, Group, Grid, GridItem, XInput, XButton, XTable, Scroller, Cell, TransferDom, Popup, PopupHeader, Checklist, Spinner } from 'vux'
+  import { Swiper, SwiperItem, Search, Group, Grid, GridItem, XInput, XButton, XTable, Scroller, Cell, TransferDom, Popup, PopupHeader, Checklist, Spinner, Range } from 'vux'
   import { mapState, mapActions } from 'vuex'
   import $ from "webpack-zepto";
   import axios from "axios"
@@ -478,6 +487,7 @@
       PopupHeader,
       Checklist,
       Spinner,
+      Range,
     },
     created(){
       this.fetchSysList();
@@ -677,13 +687,13 @@
         )
         .then(function (response) {
           if(response.status == 200){
-            Tool.toast(_this, '添加附件成功');
-            _this.value3 = '' 
-            _this.branchListValue = []
+            Tool.toast(_this, '设置附件成功');
+            // _this.value3 = '' 
+            // _this.branchListValue = []
             _this.fetchInfoList();
             _this.fixSwiperHeight();
           }else{
-            Tool.toast(_this, '添加附件失败');
+            Tool.toast(_this, '设置附件失败');
           }
         })
         .catch(function (error) {
@@ -765,6 +775,7 @@
           //1未启用2启用3暂停4停止5完成6调试7延期(轮灌计划状态)
           //1待激活2激活3暂停4停止5阻塞6完成(轮灌执行计划状态)
           return this.infoList.map((irrplan, index) =>{
+            irrplan.progressMax = irrplan.planExes.length;
             const nextActivePlanExe = irrplan.planExes.filter( item => item.status == 1 )
             const activePlanExe = irrplan.planExes.filter( item => item.status == 2 )
             const pausedPlanExe = irrplan.planExes.filter( item => item.status == 3 )
@@ -772,25 +783,33 @@
             if(activePlanExe.length > 1){
               curPlanExe = activePlanExe
               curPlanExe.sort((a, b) =>  a.sequence - b.sequence )
+              irrplan.progressCurrent = curPlanExe[curPlanExe.length-1].sequence
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[curPlanExe.length-1].sequence )
             }else if(activePlanExe.length == 1){
               curPlanExe = activePlanExe
+              irrplan.progressCurrent = curPlanExe.sequence
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence + 1 )
             }else if(nextActivePlanExe.length > 0){
               curPlanExe = nextActivePlanExe
+              irrplan.progressCurrent = curPlanExe.sequence == 1 ? 0 : curPlanExe[curPlanExe.length-1].sequence
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence + 1 )
             }else if(pausedPlanExe.length > 0 || stopPlanExe.length > 0){
               curPlanExe = nextActivePlanExe.length > 0 ? pausedPlanExe : stopPlanExe
+              irrplan.progressCurrent = curPlanExe.sequence == 1 ? 0 : curPlanExe[curPlanExe.length-1].sequence
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence + 1 )
               if(curPlanExe.sequence != 1){
                 nextPlanExe = curPlanExe
+                irrplan.progressCurrent = curPlanExe[curPlanExe.length-1].sequence
                 curPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence - 1 )
               }
             }else if(irrplan.status == 5){
               curPlanExe = irrplan.planExes.filter( item => item.sequence == irrplan.planExes.length )
-              nextPlanExe = []
+              irrplan.progressCurrent = irrplan.progressMax
+              nextPlanExe = curPlanExe
+              // nextPlanExe = []
             }else{
               curPlanExe = irrplan.planExes.filter( item => item.sequence == 1 )
+              irrplan.progressCurrent = 0
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == 2 )
             }
             irrplan.curPlanExe = curPlanExe;
@@ -837,16 +856,16 @@
     },
     data () {
       return {
-        keyWord: '',
         msgFlag: false,
         show1: false,
+        autoFixed: false,
+        keyWord: '',
         msgText: '',
         timer: '',
+        value3: '',
         curSwiperIndex: 0,
         PWInfo: [],
         infoList: [],
-        autoFixed: false,
-        value3: '',
         rawBranchList: [],
         branchListValue: [],
         status: {

@@ -20,6 +20,7 @@ import { Group, XInput, XButton, CheckIcon } from 'vux'
 import axios from "axios"
 import { URL } from "@/utils/API"
 import Tool from "@/utils/Tool"
+import { login } from '@/utils/http'
 
 export default {
   components: {
@@ -36,6 +37,7 @@ export default {
       this.loginName = Tool.getCookie("loginName");
       this.loginPass = Tool.getCookie("loginPass");
     }
+    this.get1()
   },
   methods: {
     login(){
@@ -78,6 +80,10 @@ export default {
           });
       }
     },
+    get1() {
+            let res = login({ username: 'admin', password: 'dbadmin20181' })
+            console.log(res)
+    }
   },
   data() {
     return {
