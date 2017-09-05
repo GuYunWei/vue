@@ -4,6 +4,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { URL } from "@/utils/API"
 
 export default {
 	components: {
@@ -11,6 +12,9 @@ export default {
 	},
 	created(){
 
+	},
+	mounted(){
+		this.url = URL.irrigate + this.sysList[this.curIndex].sysId;
 	},
 	computed:{
 		...mapState({
@@ -21,9 +25,15 @@ export default {
 		  isLoading: state => state.vux.isLoading,
 		  direction: state => state.vux.direction
 		}),
-		url(){
-			return "http://nmgjg.unilogger.cn:8011/jsgg/yxkz/tjbg/ggList.html?sysId=" + this.sysList[this.curIndex].sysId;
-		}
+		// url(){
+		// 	return URL.irrigate + this.sysList[this.curIndex].sysId;
+		// }
+	},
+	watch: {
+      sysList(curVal, oldVal){
+      	if(!this.sysList) return false
+        this.url = URL.irrigate + this.sysList[this.curIndex].sysId;
+      },
 	},
 	methods: {
 		loaded(){
@@ -32,7 +42,7 @@ export default {
 	},
 	data(){
 		return{
-			
+			url: ''
 		}
 	}
 }

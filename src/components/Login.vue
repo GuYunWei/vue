@@ -1,7 +1,7 @@
 <template>
   <div class="loginPanel">
-    <p class="logo"><img src="../assets/logo.png" alt=""></p>
-    <p class="title">轮灌管理系统</p>
+    <p class="logo"><img src="../assets/logo.gif" alt=""></p>
+    <!-- <p class="title">自动化轮灌系统</p> -->
     <group>
       <x-input placeholder="请输入账号" type="text" pattern="[0-9]*" required ref="username" v-model="loginName">
         <icon class="icon" slot="label" name="user" :scale="2.5"></icon>
@@ -10,7 +10,7 @@
         <icon class="icon" slot="label" name="password" :scale="2.5"></icon>
       </x-input>
     </group>
-    <check-icon class="remember" :value.sync="remember" type="plain">记住密码?</check-icon>
+    <!-- <check-icon class="remember" :value.sync="remember" type="plain">记住密码?</check-icon> -->
     <x-button type="primary" @click.native="login">登录</x-button>
   </div>
 </template>
@@ -20,7 +20,7 @@ import { Group, XInput, XButton, CheckIcon } from 'vux'
 import axios from "axios"
 import { URL } from "@/utils/API"
 import Tool from "@/utils/Tool"
-import { login } from '@/utils/http'
+// import { login, login2 } from '@/utils/http'
 
 export default {
   components: {
@@ -32,12 +32,15 @@ export default {
   mounted(){
     this.$store.commit('updateLoadingStatus', {isLoading: false})
     const remember = Tool.getCookie("remember");
+    if(Tool.getCookie("Token")){
+      this.$router.push("/home");
+    }
     if(remember == "true"){
       this.remember = true;
       this.loginName = Tool.getCookie("loginName");
       this.loginPass = Tool.getCookie("loginPass");
     }
-    this.get1()
+    // this.get1()
   },
   methods: {
     login(){
@@ -80,9 +83,16 @@ export default {
           });
       }
     },
-    get1() {
-            let res = login({ username: 'admin', password: 'dbadmin20181' })
-            console.log(res)
+    async get1() {
+      let res = await login({ username: 'admin', password: 'dbadmin2018' })
+      console.log(res)
+      let res2 = await login2({ username: 'admin', password: 'dbadmin2018', msg: res.message })
+      console.log(res2)
+      // let parallelDataFetch = await Promise.all([
+      //     login({ username: 'admin', password: 'dbadmin2018' }),
+      //     login2({ username: 'admin', password: 'dbadmin2018' }),
+      // ]);
+      // console.log('Async parallel+fetch >>>', parallelDataFetch);
     }
   },
   data() {
@@ -101,31 +111,15 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 body { background-color: #fbf9fe; width: 10rem!important; height:100%; margin: 0 auto; }
 .title{ color: #333; font-size: 30px;}
-.logo{ width: 80px; height: 80px; margin: 0 auto 50px; background-color: #4b4c4b; }
-.logo>img{ width: 100%; height: 100%; }
+.logo{ width: 100%; height: 80px; margin: 50px auto 50px; }
+.logo>img{ width: 80%; }
 .loginPanel{ padding-top: 50px; }
 .loginPanel .svg-icon{ vertical-align: middle; margin-right: 10px; }
 .weui-input{ font-size: 16px!important; padding: 5px 15px; vertical-align: bottom; }
 .loginPanel .weui-btn_primary { width: 90%!important; margin: 1.5rem auto;}
 .remember{ float: right; margin-right: 0.4rem; padding-top: 0.2rem; font-size: 0.4rem; }
-.password:after {
-    content: " ";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    height: 1px;
-    border-bottom: 1px solid #D9D9D9;
-    color: #D9D9D9;
-    -webkit-transform-origin: 0 0;
-    -ms-transform-origin: 0 0;
-    transform-origin: 0 0;
-    -webkit-transform: scaleY(0.5);
-    -ms-transform: scaleY(0.5);
-    transform: scaleY(0.5);
-}
+.password:after {content: " ";position: absolute;left: 0;bottom: 0;right: 0;height: 1px;border-bottom: 1px solid #D9D9D9;color: #D9D9D9;-webkit-transform-origin: 0 0;-ms-transform-origin: 0 0;transform-origin: 0 0;-webkit-transform: scaleY(0.5);-ms-transform: scaleY(0.5);transform: scaleY(0.5);}
 </style>

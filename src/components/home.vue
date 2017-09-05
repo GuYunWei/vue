@@ -108,17 +108,17 @@ export default {
       this.$store.commit('updateIndex', { curIndex: +index })
     },
     logout(){
-      Tool.setCookie("userId", 0, -1);
-      Tool.setCookie("userName", 0, -1);
-      Tool.setCookie("isadmin", 0, -1);
-      Tool.setCookie("Token", 0, -1);
-      Tool.setCookie("unismName", 0, -1);
-      Tool.setCookie("apiKey", 0, -1);
-      Tool.setCookie("groupId", 0, -1);
-      Tool.setCookie("ConsoleToken", 0, -1);
-      Tool.setCookie("userNum", 0, -1);
-      Tool.setCookie("groupName", 0, -1);
-      Tool.setCookie("isLeader", 0, -1);
+      Tool.delCookie("userId");
+      Tool.delCookie("userName");
+      Tool.delCookie("isadmin");
+      Tool.delCookie("Token");
+      Tool.delCookie("unismName");
+      Tool.delCookie("apiKey");
+      Tool.delCookie("groupId");
+      Tool.delCookie("ConsoleToken");
+      Tool.delCookie("userNum");
+      Tool.delCookie("groupName");
+      Tool.delCookie("isLeader");
       this.$store.commit('updateSysList', { sysList: [] })
       this.$store.commit('updateIndex', { curIndex: 0 })
       this.$router.push("/");
@@ -200,7 +200,7 @@ export default {
       })
       .then(function (response) {
         _this.$set(_this.sysList[_this.curIndex], 'rotList', [])
-        _this.$refs.children.status = { pulldownStatus: 'default' }
+        _this.$refs.children.$refs.scroller.finishPullToRefresh()
         if(response.status == 200){
           if(response.data.status == true){
             const rotList = response.data.result
@@ -215,7 +215,7 @@ export default {
       .catch(function (error) {
         console.log(error);
         _this.$set(_this.sysList[_this.curIndex], 'rotList', [])
-        _this.$refs.children.status = { pulldownStatus: 'default' }
+        _this.$refs.children.$refs.scroller.finishPullToRefresh()
       });
     },
     fetchRotPlanList(){
@@ -259,7 +259,7 @@ export default {
       })
       .then(function (response) {
         _this.$set(_this.sysList[_this.curIndex].rotIrrPlanList[i], 'rotPlanExeList', [])
-        _this.$refs.children.status = { pulldownStatus: 'default' }
+        _this.$refs.children.$refs.scroller.finishPullToRefresh()
         if(response.status == 200){
           if(response.data.status == true){
             let rotPlanExeList = response.data.result
@@ -277,7 +277,7 @@ export default {
       .catch(function (error) {
         console.log(error);
         _this.$set(_this.sysList[_this.curIndex].rotIrrPlanList[i], 'rotPlanExeList', [])
-        _this.$refs.children.status = { pulldownStatus: 'default' }
+        _this.$refs.children.$refs.scroller.finishPullToRefresh()
       });
     },
   },
@@ -338,19 +338,28 @@ export default {
 <style lang="less">
 @maincolor : #47dd1f;
 
+.vux-popup-dialog{ z-index: 10000!important }
+.popupTime .weui-cell_access{ padding: 10px 0!important;}
+.popupTime .weui-label{ width: auto }
+.popupTime .vux-cell-box:before{ border: none; }
+.popupPeriod:before{ left:0!important }
+.popupPeriod .vux-x-input{ padding: 10px 0; }
+.popupPeriod .weui-cell__primary input{ text-align: right; }
+
 [v-cloak] { display:none !important; }
 body { background-color: #fbf9fe;width: 10rem!important; height:100%; margin: 0 auto; }
 html, body { height: 100%; width: 100%; overflow-x: hidden; }
 .curRotInfo .vux-no-group-title{ margin-top: 0;}
 .progress:before{ border: none!important; }
 #vux_view_box_body{ padding-bottom: 0!important; }
+#vux_view_box_body>div{ margin-top: 46px!important}
 .leftMenu { fill:#fff;position:relative;top:-8px;left:-3px; }
 .bumpStatus{ overflow-y: visible!important; }
 .bumpStatus .vux-swiper{ height: 1.8rem!important; background-color: #fff!important; overflow-y: visible!important; }
 .rotStatus .vux-swiper{ height: 100%!important; background-color: #fff!important; overflow-y: visible!important;  overflow:hidden!important}
-.irriSwiper, .planSwiper{min-height: 100%;}
+.irriSwiper, .planSwiper{ min-height: 100%;}
 .irriSwiper .vux-swiper{ overflow-y: visible!important; }
-.planSwiper .vux-swiper, .irriSwiper .vux-swiper{ height: 100%!important; background-color: #fbf9fe!important;
+.planSwiper .vux-swiper, .irriSwiper .vux-swiper{ height: 100%!important; min-height:100%; background-color: #fbf9fe!important;
 overflow: scroll!important }
 .vux-slider > .vux-swiper > .vux-swiper-item{ overflow-y: auto; height: auto!important }
 .vux-swiper-desc{ height:40px!important; background-image: none!important; line-height: 40px!important; padding: 0!important; }

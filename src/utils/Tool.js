@@ -41,7 +41,7 @@ export default {
 	delCookie(name) {
 	    const exp = new Date();
 	    exp.setTime(exp.getTime() - 1);
-	    const cval = getCookie(name);
+	    const cval = this.getCookie(name);
 	    name = cookie_pre + name;
 	    document.cookie = name + "=" + cval + ";path=" + cookie_path + ";expires=" + exp.toGMTString();
 	},

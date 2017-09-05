@@ -20,12 +20,20 @@ const originalConfig = {
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
+    modules: [
+      resolve('src'),
+      resolve('node_modules')
+    ],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src')
+      '@': resolve('src'),
+      'assets': resolve('src/assets'),
+      'components': resolve('src/components'),
+      'store': resolve('src/store')
     }
   },
   module: {
+    noParse: /node_modules\/(element-ui\.js)/,
     rules: [
       // {
       //   test: /\.(js|vue)$/,
@@ -43,7 +51,8 @@ const originalConfig = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        loader: 'babel-loader?cacheDirectory=true',
+        exclude: /node_modules/,
         include: [resolve('src'), resolve('test')]
       },
       {

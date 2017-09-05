@@ -30,6 +30,10 @@ module.exports = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true
     }),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('../vendor-manifest.json')
+    }),
     new FriendlyErrorsPlugin()
   ]
 })

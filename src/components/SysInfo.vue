@@ -1,5 +1,5 @@
 <template>
-  <scroller lock-x scrollbar-y use-pulldown :pulldown-config="{content:'下拉刷新',downContent:'下拉刷新',upContent:'释放刷新',loadingContent:'加载中'}" height="100%" @on-pulldown-loading="loadStatus" v-model="status">
+  <scroller :on-refresh="refresh" ref="scroller">
     <div>
       <div class="scrollPanel">
         <swiper class="bumpStatus" direction="horizontal" :min-moving-distance="20" :show-dots="false"  :threshold="100">
@@ -93,16 +93,25 @@
           {{msgText}}
         </div>
       </div>
-      <swiper id="rotStatus" class="rotStatus" direction="horizontal" :min-moving-distance="20" :show-dots="false" @on-index-change="changeCurIrr" :threshold="100">
-        <swiper-item v-for="(irrplan, index) in curIrrPlans" :key="index">
-          <cell class="progress" title="轮灌进度" primary="content">
-            <range v-model="irrplan.progressCurrent"  :min="0" :max="irrplan.progressMax" :range-bar-height="4" disabled></range>
+      <swiper id="rotStatus" class="rotStatus" direction="horizontal" :min-moving-distance="20" :show-dots="false" @on-index-change="changeCurIrr" :threshold="100" :style="{ minHeight: swperMinHeight + 'px' }">
+        <swiper-item v-if="curIrrPlans.length > 0" v-for="(irrplan, index) in curIrrPlans" :key="index">
+          <cell class="progress" :title="irrplan.name" primary="content">
+          <progressbar :value="irrplan.progress"></progressbar>
           </cell>
-          <group class="curRotInfo" v-if="irrplan.curPlanExe" v-for="item in irrplan.curPlanExe" :key="item">
+          <group class="curRotInfo" v-if="irrplan.curPlanExe" v-for="(item, curEIndex) in irrplan.curPlanExe" :key="curEIndex">
             <x-table class="irriTable" :cell-bordered="false" style="background-color:#fff;">
               <thead>
                 <tr>
-                  <th colspan="7">当前轮灌:{{item.rgName}}({{item.rgCode}})</th>
+                  <th colspan="7">
+                    {{irrplan.curPlanExe.length == 2 && curEIndex == 0 ? '上一轮灌：' : '当前轮灌：'}}
+                    {{item.rgName}}({{item.rgCode}})
+                    <img v-if="item.status == 1" src="../assets/status-wjh.png" width="17" style="vertical-align:middle">
+                    <img v-if="item.status == 2" src="../assets/status-qy.png" width="17" style="vertical-align:middle">
+                    <img v-if="item.status == 3" src="../assets/status-zt.png" width="17" style="vertical-align:middle">
+                    <img v-if="item.status == 4" src="../assets/status-ty.png" width="17" style="vertical-align:middle">
+                    <img v-if="item.status == 5" src="../assets/block.png" width="20" style="vertical-align:middle">
+                    <img v-if="item.status == 6" src="../assets/status-ok.png" width="17" style="vertical-align:middle">
+                  </th>
                 </tr>
                 <tr>
                   <th colspan="7">
@@ -113,7 +122,7 @@
                       </grid-item>
                       <grid-item class="statusItem" label1="已灌时间">
                         <img src="../assets/time.png" width="30" alt="">
-                        <p>{{formatDate(item.startTime)}}</p>
+                        <p>{{item.status == 2 ? formatDate(item.startTime) : '---'}}</p>
                       </grid-item>
                       <grid-item class="statusItem" label1="已灌水量">
                         <img src="../assets/volume.png" width="30" alt="">
@@ -133,12 +142,11 @@
                   <td>压力<br/>(m)</td>
                   <td>电压<br/>(v)</td>
                   <td>采集时间</td>
-                  <td></td>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="item.branchInfos.length > 0" v-for="branch in item.branchInfos" :key="irrplan">
-                  <td>{{branch.name}}</td>
+                  <td>{{branch.name.replace(/-/g, '').replace(/管/g, '')}}</td>
                   <td class="irriItem">
                     <div class="name">
                       <span>
@@ -149,13 +157,12 @@
                   <td>{{branch.origVal[2] > 0 ? branch.origVal[2].toFixed(2) : 0}}</td>
                   <td>{{branch.origVal[0] > 0 ? branch.origVal[0].toFixed(2) : 0}}</td>
                   <td>
-                    <img width='20' :src="require('../assets/'+branch.batterySts+'.png')" />
+                    <img width='20' v-if="branch.batterySts!=null" :src="require('../assets/'+branch.batterySts+'.png')" />
                   </td>
                   <td>{{branch.collTime.substr(5, 11)}}</td>
-                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
                 <tr class="affix" v-if="item.affixInfos.length > 0" v-for="affix in item.affixInfos" :key="irrplan">
-                  <td>{{affix.name}}</td>
+                  <td>{{affix.name.replace(/-/g, '').replace(/管/g, '')}}</td>
                   <td class="irriItem">
                     <div class="name">
                       <span>
@@ -166,10 +173,9 @@
                   <td>{{affix.origVal[2] > 0 ? affix.origVal[2].toFixed(2) : 0}}</td>
                   <td>{{affix.origVal[0] > 0 ? affix.origVal[0].toFixed(2) : 0}}</td>
                   <td>
-                    <img width='20' :src="require('../assets/'+affix.batterySts+'.png')" />
+                    <img width='20' v-if="affix.batterySts!=null" :src="require('../assets/'+affix.batterySts+'.png')" />
                   </td>
                   <td>{{affix.collTime.substr(5, 11)}}</td>
-                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
                 <!-- <tr>
                   <td>阀门02</td>
@@ -195,7 +201,14 @@
             <x-table class="irriTable" :cell-bordered="false" style="background-color:#fff;">
               <thead>
                 <tr>
-                  <th colspan="7">下一轮灌:{{irrplan.nextPlanExe.rgName}}({{irrplan.nextPlanExe.rgCode}})</th>
+                  <th colspan="7">下一轮灌:{{irrplan.nextPlanExe.rgName}}({{irrplan.nextPlanExe.rgCode}})
+                  <img v-if="irrplan.nextPlanExe.status == 1" src="../assets/status-wjh.png" width="17" style="vertical-align:middle">
+                    <img v-if="irrplan.nextPlanExe.status == 2" src="../assets/status-qy.png" width="17" style="vertical-align:middle">
+                    <img v-if="irrplan.nextPlanExe.status == 3" src="../assets/status-zt.png" width="17" style="vertical-align:middle">
+                    <img v-if="irrplan.nextPlanExe.status == 4" src="../assets/status-ty.png" width="17" style="vertical-align:middle">
+                    <img v-if="irrplan.nextPlanExe.status == 5" src="../assets/block.png" width="20" style="vertical-align:middle">
+                    <img v-if="irrplan.nextPlanExe.status == 6" src="../assets/status-ok.png" width="17" style="vertical-align:middle">
+                  </th>
                 </tr>
                 <tr>
                   <th colspan="7">
@@ -206,7 +219,7 @@
                       </grid-item>
                       <grid-item class="statusItem" label1="已灌时间">
                         <img src="../assets/time.png" width="30" alt="">
-                        <p>{{formatDate(irrplan.nextPlanExe.startTime)}}</p>
+                        <p>{{irrplan.nextPlanExe.status == 2 ? formatDate(irrplan.nextPlanExe.startTime) : '---'}}</p>
                       </grid-item>
                       <grid-item class="statusItem" label1="已灌水量">
                         <img src="../assets/volume.png" width="30" alt="">
@@ -220,10 +233,11 @@
                   </th>
                 </tr>
                 <tr>
-                  <td colspan="7" class="addBranch">
-                    <x-input placeholder="请输入支管名称" v-model="value3" class="weui-vcode" disabled @click.native="showBranchList">
+                  <td colspan="7" class="setBranch">
+                    <x-input placeholder="请输入支管名称" v-model="value3" class="weui-vcode" disabled @click.native="showBranchList($event, irrplan.nextPlanExe)">
                     </x-input>
-                      <x-button slot="right" type="primary" mini  @click.native="addBranch">设置支管</x-button>
+                      <x-button slot="right" type="primary" mini :disabled="branchListValue.length == 0" @click.native="setBranch">设置</x-button>
+                      <x-button slot="right" type="primary" mini  @click.native="resetBranch">恢复</x-button>
                   </td>
                 </tr>
                 <tr class="title">
@@ -238,7 +252,7 @@
               </thead>
               <tbody>
                 <tr v-if="irrplan.nextPlanExe.branchInfos.length > 0" v-for="branch in irrplan.nextPlanExe.branchInfos" :key="irrplan">
-                  <td>{{branch.name}}</td>
+                  <td>{{branch.name.replace(/-/g, '').replace(/管/g, '')}}</td>
                   <td class="irriItem">
                     <div class="name">
                       <span>
@@ -249,13 +263,13 @@
                   <td>{{branch.origVal[2] > 0 ? branch.origVal[2].toFixed(2) : 0}}</td>
                   <td>{{branch.origVal[0] > 0 ? branch.origVal[0].toFixed(2) : 0}}</td>
                   <td>
-                    <img width='20' :src="require('../assets/'+branch.batterySts+'.png')" />
+                    <img width='20' v-if="branch.batterySts!=null" :src="require('../assets/'+branch.batterySts+'.png')" />
                   </td>
                   <td>{{branch.collTime.substr(5, 11)}}</td>
-                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
+                  <td @click="showConfirmBox($event, irrplan.nextPlanExe, branch.id)" style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
                 </tr>
                 <tr class="affix" v-if="irrplan.nextPlanExe.affixInfos.length > 0" v-for="affix in irrplan.nextPlanExe.affixInfos" :key="irrplan">
-                  <td>{{affix.name}}</td>
+                  <td>{{affix.name.replace(/-/g, '').replace(/管/g, '')}}</td>
                   <td class="irriItem">
                     <div class="name">
                       <span>
@@ -266,15 +280,17 @@
                   <td>{{affix.origVal[2] > 0 ? affix.origVal[2].toFixed(2) : 0}}</td>
                   <td>{{affix.origVal[0] > 0 ? affix.origVal[0].toFixed(2) : 0}}</td>
                   <td>
-                    <img width='20' :src="require('../assets/'+affix.batterySts+'.png')" />
+                    <img width='20' v-if="affix.batterySts!=null" :src="require('../assets/'+affix.batterySts+'.png')" />
                   </td>
                   <td>{{affix.collTime.substr(5, 11)}}</td>
-                  <td style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
+                  <td @click="affixConfirmBox($event, irrplan.nextPlanExe, affix.id)" style="padding: 0 0.2rem"><img src="../assets/delete.png" width="17" alt=""></td>
+                  <td></td>
                 </tr>
               </tbody>
             </x-table>
           </group>
         </swiper-item>
+        <swiper-item v-if="curIrrPlans.length == 0" style="padding:50px 0;font-size:20px">当前暂无轮灌</swiper-item>
         <!-- <swiper-item v-for="(irrplan, index) in curIrrPlans" :key="index">
           <group class="curRotInfo" v-if="irrplan.curPlanExe">
             <x-table class="irriTable" :cell-bordered="false" style="background-color:#fff;">
@@ -379,7 +395,7 @@
                   </th>
                 </tr>
                 <tr>
-                  <td colspan="6" class="addBranch">
+                  <td colspan="6" class="setBranch">
                     <x-input placeholder="请输入支管名称" class="weui-vcode">
                       <x-button slot="right" type="primary" mini>添加支管</x-button>
                     </x-input>
@@ -450,22 +466,27 @@
         </popup>
       </div>
     </div>
-    <!--pulldown slot-->
-    <div slot="pulldown" class="xs-plugin-pulldown-container xs-plugin-pulldown-down" style="position: absolute; width: 100%; height: 20px; line-height:20px; top: -40px; text-align: center;">
-      <span v-show="status.pulldownStatus === 'down'">下拉刷新</span>
-      <span v-show="status.pulldownStatus === 'up'">释放刷新</span>
-      <span v-show="status.pulldownStatus === 'loading'"><spinner type="ios-small"></spinner></span>
+    <div v-transfer-dom>
+      <confirm v-model="showConfirm" @on-confirm="deleteConfirm">
+        <p style="text-align:center;font-size:20px">确认删除？</p>
+      </confirm>
+      <confirm v-model="showAffixConfirm" @on-confirm="deleteAffixConfirm">
+        <p style="text-align:center;font-size:20px">确认删除？</p>
+      </confirm>
     </div>
   </scroller>
 </template>
 
 <script>
-  import { Swiper, SwiperItem, Search, Group, Grid, GridItem, XInput, XButton, XTable, Scroller, Cell, TransferDom, Popup, PopupHeader, Checklist, Spinner, Range } from 'vux'
+  import { Swiper, SwiperItem, Search, Group, Grid, GridItem, XInput, XButton, XTable, Cell, TransferDom, Popup, PopupHeader, Checklist, Spinner, Confirm } from 'vux'
   import { mapState, mapActions } from 'vuex'
   import $ from "webpack-zepto";
   import axios from "axios"
   import Tool from "@/utils/Tool"
   import { URL } from "@/utils/API"
+  import Vue from 'vue'
+  import progressbar from './ProgressBar'
+
 
   export default {
     directives: {
@@ -480,14 +501,14 @@
       XInput,
       XButton,
       XTable,
-      Scroller,
       Search,
       Cell,
       Popup,
       PopupHeader,
       Checklist,
       Spinner,
-      Range,
+      Confirm,
+      progressbar,
     },
     created(){
       this.fetchSysList();
@@ -497,6 +518,7 @@
       this.fetchSysList();
       this.fetchInfoList();
       this.fixSwiperHeight();
+      this.swperMinHeight = $('body').height()- 46;
     },
     methods: {
       showMsg($event){
@@ -543,19 +565,20 @@
               _this.infoList = response.data.result
             }else{
               Tool.toast(_this, response.data.message);
+              _this.infoList = []
             }
           }else{
             Tool.toast(_this, '获取数据失败');
             _this.infoList = []
           }
           _this.$store.commit('updateLoadingStatus', {isLoading: false})
-          _this.status.pulldownStatus = 'default'
+          _this.$refs.scroller.finishPullToRefresh()
         })
         .catch(function (error) {
           Tool.toast(_this, '获取数据错误');
           _this.infoList = []
           _this.$store.commit('updateLoadingStatus', {isLoading: false})
-          _this.status.pulldownStatus = 'default'
+          _this.$refs.scroller.finishPullToRefresh()
         });
       },
       fetchBranchesBySysId(){
@@ -678,22 +701,27 @@
       setFocus () {
         this.$refs.search.setFocus()
       },
-      addBranch(){
+      setBranch(){
         const _this = this;
         const branchId = this.branchListValue.join(",")
         const id = this.curIrrPlans[this.curSwiperIndex].nextPlanExe.id
+        this.setAffix(id, branchId)
+      },
+      setAffix(id, branchId){
+        const _this = this;
         axios.post(URL.setAffix, 
           { id : id, branchId: branchId }
         )
         .then(function (response) {
-          if(response.status == 200){
-            Tool.toast(_this, '设置附件成功');
-            // _this.value3 = '' 
-            // _this.branchListValue = []
+          if(response.status == 200 && response.data.status == true){
+            Tool.toast(_this, '添加附件成功');
+            _this.value3 = '' 
+            _this.branchListValue = []
             _this.fetchInfoList();
+            _this.fetchBranchesBySysId();
             _this.fixSwiperHeight();
           }else{
-            Tool.toast(_this, '设置附件失败');
+            Tool.toast(_this, '添加附件失败');
           }
         })
         .catch(function (error) {
@@ -703,8 +731,8 @@
       listChange(val) {
         this.branchListValue = val
       },
-      fetchBrancchName(branchId){
-        var arrayFilter = this.branchList.filter(function(item) {
+      fetchBranchName(branchId){
+        const arrayFilter = this.branchList.filter(function(item) {
             return item.key == branchId;
         });
         return arrayFilter[0].value
@@ -722,7 +750,9 @@
             }
         }
       },
-      showBranchList(){
+      showBranchList($event, nextPlanExe){
+        this.branchInfos = nextPlanExe.branchInfos;
+        this.affixInfos = nextPlanExe.affixInfos;
         this.show1 = true
         this.$refs.search.currentValue = ''
         this.$refs.search.isCancel = true
@@ -736,6 +766,56 @@
         this.fetchInfoList();
         this.$emit('message');
       },
+      showConfirmBox($event, nextPlanExe, branchId){
+        let branchIdList = nextPlanExe.branchId2 ? nextPlanExe.branchId2 : nextPlanExe.branchId1
+        if(branchIdList.length == 0) return false
+        branchIdList = branchIdList.split(',').filter(item=>{
+          return item != branchId;
+        })
+        this.showConfirm = true
+        this.deleteBranchId = branchIdList.join(',')
+      },
+      affixConfirmBox($event, nextPlanExe, branchId){
+        let branchIdList = nextPlanExe.affixIds ? nextPlanExe.affixIds.split(",") : []
+        if(branchIdList.length == 0) return false
+        this.affixBranchIdList = branchIdList.filter(item=>{
+          return item != branchId;
+        })
+        this.showAffixConfirm = true
+      },
+      resetBranch(){
+        this.deleteBranchId = ''
+        this.deleteConfirm()
+      },
+      deleteConfirm(){
+        const _this = this;
+        const id = this.curIrrPlans[this.curSwiperIndex].nextPlanExe.id
+        axios.post(URL.setBranch, 
+          { id : id, branchId: this.deleteBranchId }
+        )
+        .then(function (response) {
+          if(response.status == 200 && response.data.status == true){
+            Tool.toast(_this, '更新附件成功');
+            _this.fetchInfoList();
+            _this.fixSwiperHeight();
+          }else{
+            Tool.toast(_this, '更新附件失败');
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        });
+      },
+      deleteAffixConfirm(){
+        const branchId = this.affixBranchIdList.join(",")
+        console.log(branchId)
+        const id = this.curIrrPlans[this.curSwiperIndex].nextPlanExe.id
+        this.setAffix(id, branchId)
+      },
+      refresh(){
+        this.fetchInfoList();
+        this.$emit('message');
+      }
     },
     watch: {
       curIndex(curVal, oldVal){
@@ -746,12 +826,17 @@
       sysList(curVal, oldVal){
         this.fetchSysList();
         this.fetchInfoList();
+        this.swperMinHeight = $('body').height()- 46;
       },
       branchListValue(){
         const branchListName = []
         const _this = this;
+        if(this.branchListValue.length == 0){
+          this.value3 = ''
+          return false
+        }
         this.branchListValue.map((item, index) =>{
-          branchListName.push(_this.fetchBrancchName(item))
+          branchListName.push(_this.fetchBranchName(item))
         })
         this.value3 = branchListName.join(',');
       }
@@ -769,13 +854,13 @@
         this.$nextTick(() =>{
           this.fixSwiperHeight();
         })
-        if(this.infoList.length == 0) return false
+        if(this.infoList.length == 0) return []
           let curPlanExe = [];
           let nextPlanExe = [];
           //1未启用2启用3暂停4停止5完成6调试7延期(轮灌计划状态)
           //1待激活2激活3暂停4停止5阻塞6完成(轮灌执行计划状态)
           return this.infoList.map((irrplan, index) =>{
-            irrplan.progressMax = irrplan.planExes.length;
+            irrplan.progress = parseInt(irrplan.progress*100)
             const nextActivePlanExe = irrplan.planExes.filter( item => item.status == 1 )
             const activePlanExe = irrplan.planExes.filter( item => item.status == 2 )
             const pausedPlanExe = irrplan.planExes.filter( item => item.status == 3 )
@@ -783,33 +868,26 @@
             if(activePlanExe.length > 1){
               curPlanExe = activePlanExe
               curPlanExe.sort((a, b) =>  a.sequence - b.sequence )
-              irrplan.progressCurrent = curPlanExe[curPlanExe.length-1].sequence
-              nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[curPlanExe.length-1].sequence )
+              nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[curPlanExe.length-1].sequence + 1 )
             }else if(activePlanExe.length == 1){
               curPlanExe = activePlanExe
-              irrplan.progressCurrent = curPlanExe.sequence
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence + 1 )
             }else if(nextActivePlanExe.length > 0){
               curPlanExe = nextActivePlanExe
-              irrplan.progressCurrent = curPlanExe.sequence == 1 ? 0 : curPlanExe[curPlanExe.length-1].sequence
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence + 1 )
             }else if(pausedPlanExe.length > 0 || stopPlanExe.length > 0){
-              curPlanExe = nextActivePlanExe.length > 0 ? pausedPlanExe : stopPlanExe
-              irrplan.progressCurrent = curPlanExe.sequence == 1 ? 0 : curPlanExe[curPlanExe.length-1].sequence
+              curPlanExe = pausedPlanExe.length > 0 ? pausedPlanExe : stopPlanExe
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence + 1 )
-              if(curPlanExe.sequence != 1){
+              if(curPlanExe[0].sequence != 1){
                 nextPlanExe = curPlanExe
-                irrplan.progressCurrent = curPlanExe[curPlanExe.length-1].sequence
                 curPlanExe = irrplan.planExes.filter( item => item.sequence == curPlanExe[0].sequence - 1 )
               }
             }else if(irrplan.status == 5){
               curPlanExe = irrplan.planExes.filter( item => item.sequence == irrplan.planExes.length )
-              irrplan.progressCurrent = irrplan.progressMax
-              nextPlanExe = curPlanExe
-              // nextPlanExe = []
+              // nextPlanExe = curPlanExe
+              nextPlanExe = []
             }else{
               curPlanExe = irrplan.planExes.filter( item => item.sequence == 1 )
-              irrplan.progressCurrent = 0
               nextPlanExe = irrplan.planExes.filter( item => item.sequence == 2 )
             }
             irrplan.curPlanExe = curPlanExe;
@@ -833,7 +911,7 @@
         return filterGetWayObj;
       },
       branchList(){
-        const branchList = []
+        let branchList = []
         this.rawBranchList.map((item, index) =>{
           item.children.map((item2, index2) =>{
             item2.children.map((item3, index3) =>{
@@ -843,42 +921,51 @@
             })
           })
         })
+        const showedBranches = this.branchInfos.concat(this.affixInfos)
+        branchList = branchList.filter((item, index)=>{
+          for (var i = 0; i < showedBranches.length; i++) {
+            if(showedBranches[i].id == item.id){
+              return false;
+            }
+          };
+          return true;
+        })
         branchList.map((item, index) =>{
           item.key = item.id
           item.value = item.name
         })
         return branchList
       },
-      // filteredList(){
-      //   if(!this.keyWord) return this.branchList;
-      //   return this.filterBranch();
-      // },
     },
     data () {
       return {
+        keyWord: '',
         msgFlag: false,
         show1: false,
+        showConfirm: false,
+        showAffixConfirm: false,
         autoFixed: false,
-        keyWord: '',
+        deleteBranchId: '',
         msgText: '',
         timer: '',
         value3: '',
         curSwiperIndex: 0,
+        swperMinHeight: 0,
         PWInfo: [],
         infoList: [],
+        branchInfos: [],
+        affixInfos: [],
         rawBranchList: [],
         branchListValue: [],
-        status: {
-          pulldownStatus: 'default'
-        },
+        affixBranchIdList: [],
       }
     }
   }
 </script>
 
 <style scoped>
-  .addBranch .vux-x-input{ float: left; width: 60%; padding: 10px 15px; }
-  .addBranch .weui-btn_primary{ float: left; margin: 5px 0; }
+  .setBranch .vux-x-input{ float: left; width: 60%; padding: 10px 15px; }
+  .setBranch .weui-btn_primary{ display: inline-block; width: 13%; padding: 0; vertical-align: middle; margin: 0; }
   .irriTable{ font-size: 0.4rem; padding: 0 1rem;}
   .irriTable tr.title{ line-height: 1; font-size: 0.4rem;}
   .irriTable tr.title>td{ padding: 0.3rem 0;}

@@ -1,5 +1,4 @@
 import axios from "axios";
-import Tool from "@/utils/Tool"
 
 axios.defaults.baseURL = 'http://nmgjg.unilogger.cn:8070'
 //设置默认请求头
@@ -7,13 +6,13 @@ axios.defaults.headers = {
 	'Content-Type': 'application/json'
 }
 // 发送请求前处理request的数据
-axios.defaults.transformRequest = [function(data) {
-	let newData = ''
-	for (let k in data) {
-		newData += encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) + '&'
-	}
-	return newData
-}]
+// axios.defaults.transformRequest = [function(data) {
+// 	let newData = ''
+// 	for (let k in data) {
+// 		newData += encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) + '&'
+// 	}
+// 	return newData
+// }]
 // 带cookie请求
 // axios.defaults.withCredentials = true
 
@@ -33,18 +32,39 @@ class Axios {
 	    }
 	  )
 	}
-	static async connect (data) {
-		var _this = this;
-	  await axios(data)
-	    .then(
-	      (response) => {
-	        return response
-	      }
-	    )
+	static connect (data) {
+	  return axios(data)
+	    .then((response) => {
+	    	if(response.status == 200){
+	        return response.data
+	    	}else{
+	    		if (response.status === 404) {
+	    		  throw '404'
+	    		} else if (response.status >= 500 && response.status < 600) {
+	    		  throw '服务器接口异常'
+	    		}
+	    	}
+	    })
 	    .catch((e) => {
-	      console.log(e)
+	      if (e === '404') {
+          return {
+            status: false,
+            message: '接口地址不正确'
+          }
+        } else if (e === '服务器接口异常') {
+          return {
+            status: false,
+            message: '服务器接口异常'
+          }
+        }else{
+        	return {
+            status: false,
+            message: '网络连接异常，请重试！'
+          }
+        }
 	    })
 	}
 }
 
 export const login = Axios.get('/privilege/access/login')
+export const login2 = Axios.get('/privilege/access/login')

@@ -9,7 +9,9 @@ import { sync } from 'vuex-router-sync';
 import Icon from 'vue-svg-icon/Icon.vue';
 import { ToastPlugin } from 'vux'
 import Tool from "@/utils/Tool" 
+import VueScroller from 'vue-scroller'
 
+Vue.use(VueScroller)
 Vue.use(ToastPlugin)
 Vue.component('icon', Icon)
 FastClick.attach(document.body);
