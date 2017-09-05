@@ -111,7 +111,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     ]),
     new webpack.DllReferencePlugin({
       context: __dirname,
-      manifest: require('../vendor-manifest.json')
+      manifest: require('./vendor-manifest.json')
     })
   ]
 })
